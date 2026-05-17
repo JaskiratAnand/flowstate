@@ -9,8 +9,8 @@ export default defineConfig({
     plugins: [tailwind()],
   }),
   manifest: {
-    name: 'FocusFlow',
-    permissions: ['storage', 'alarms', 'notifications'],
+    name: 'FlowState',
+    permissions: ['storage', 'alarms', 'notifications', 'offscreen'],
     action: {
       default_icon: 'icon.svg',
     },

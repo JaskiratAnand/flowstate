@@ -112,7 +112,7 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
           </svg>
         </div>
         <h1 class="text-xl font-bold tracking-tight text-text-primary">
-          {activeTab === 'timer' ? 'FocusFlow' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+          {activeTab === 'timer' ? 'FlowState' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
         </h1>
       </div>
       

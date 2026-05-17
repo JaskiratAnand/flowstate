@@ -37,6 +37,41 @@ export async function handleMessage(message: ActionMessage) {
   await setStorageItem('TIMER_STATE', nextState);
 }
 
+async function playSound() {
+  const OFFSCREEN_PATH = '/offscreen.html';
+
+  try {
+    // @ts-ignore
+    const contexts = (await (browser.runtime as any).getContexts({
+      contextTypes: ['OFFSCREEN_DOCUMENT'],
+    })) as any[];
+
+    if (contexts.length === 0) {
+      await (browser as any).offscreen.createDocument({
+        url: browser.runtime.getURL(OFFSCREEN_PATH),
+        reasons: ['AUDIO_PLAYBACK'],
+        justification: 'Play notification sound when timer ends',
+      });
+    }
+  } catch {
+    // Fallback if getContexts is not supported or document creation fails
+    try {
+      await (browser as any).offscreen.createDocument({
+        url: browser.runtime.getURL(OFFSCREEN_PATH),
+        reasons: ['AUDIO_PLAYBACK'],
+        justification: 'Play notification sound when timer ends',
+      });
+    } catch {
+      // Ignore if already exists
+    }
+  }
+
+  // Trigger the programmatic chime
+  await browser.runtime.sendMessage({
+    type: 'PLAY_SOUND',
+  });
+}
+
 export async function handleAlarm(alarm: { name: string }) {
   if (alarm.name === 'pomodoro-tick') {
     const state = await getStorageItem('TIMER_STATE');
@@ -49,6 +84,9 @@ export async function handleAlarm(alarm: { name: string }) {
     if (state.remainingSeconds === 0) {
       // Session finished
       await browser.alarms.clear('pomodoro-tick');
+
+      // Play sound
+      playSound().catch((err) => console.error('Audio playback failed:', err));
 
       if (state.sessionType === 'work') {
         const stats = await getStorageItem('STATS');
