@@ -102,59 +102,94 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
 </script>
 
 {#if preferences}
-  <main class="flex flex-col h-full bg-bg-primary transition-colors duration-500 overflow-hidden">
-    <!-- Minimalist Header -->
-    <header class="h-16 px-8 flex items-center justify-between z-10">
-      <div class="flex items-center gap-3 group">
-        <div class="w-9 h-9 rounded-xl bg-surface shadow-[var(--shadow-ambient)] flex items-center justify-center transition-all group-hover:scale-105 active:shadow-[var(--shadow-pressed)]">
-          <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-          </svg>
+    <main
+        class="flex flex-col h-full bg-bg-primary transition-colors duration-500 overflow-hidden"
+    >
+        <!-- Minimalist Header -->
+        <header class="h-16 px-8 flex items-center justify-between z-10">
+            <div class="flex items-center gap-3 group">
+                <div
+                    class="w-9 h-9 rounded-xl bg-surface shadow-(--shadow-ambient) flex items-center justify-center transition-all group-hover:scale-105 active:shadow-(--shadow-pressed)"
+                >
+                    <svg
+                        class="w-5 h-5 text-accent"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+                        />
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-text-primary">
+                    {activeTab === "timer"
+                        ? "FlowState"
+                        : activeTab.charAt(0).toUpperCase() +
+                          activeTab.slice(1)}
+                </h1>
+            </div>
+
+            <button
+                class="w-9 h-9 rounded-xl bg-surface shadow-(--shadow-ambient) flex items-center justify-center transition-all hover:scale-105 active:shadow-(--shadow-pressed) {activeTab ===
+                'settings'
+                    ? 'text-accent'
+                    : 'text-text-tertiary'}"
+                on:click={() => handleTabChange("settings")}
+                aria-label="Settings"
+            >
+                <svg
+                    class="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path
+                        d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+                    />
+                    <circle cx="12" cy="12" r="3" />
+                </svg>
+            </button>
+        </header>
+
+        <div class="flex-1 overflow-hidden px-8 py-4">
+            <div
+                class="tab-content h-full pb-1 overflow-y-auto scrollbar-none animate-in fade-in duration-700"
+            >
+                {#if activeTab === "timer"}
+                    <Timer />
+                {:else if activeTab === "tasks"}
+                    <TodoList />
+                {:else if activeTab === "stats"}
+                    <StatsDashboard />
+                {:else if activeTab === "settings"}
+                    <div class="space-y-8">
+                        <ThemePicker
+                            {preferences}
+                            onUpdate={handlePrefsUpdate}
+                        />
+                    </div>
+                {/if}
+            </div>
         </div>
-        <h1 class="text-xl font-bold tracking-tight text-text-primary">
-          {activeTab === 'timer' ? 'FlowState' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-        </h1>
-      </div>
-      
-      <button 
-        class="w-9 h-9 rounded-xl bg-surface shadow-[var(--shadow-ambient)] flex items-center justify-center transition-all hover:scale-105 active:shadow-[var(--shadow-pressed)] {activeTab === 'settings' ? 'text-accent' : 'text-text-tertiary'}"
-        on:click={() => handleTabChange('settings')}
-        aria-label="Settings"
-      >
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
-      </button>
-    </header>
 
-    <div class="flex-1 overflow-hidden px-8 py-4">
-      <div class="tab-content h-full pb-24 overflow-y-auto scrollbar-none animate-in fade-in duration-700">
-        {#if activeTab === 'timer'}
-          <Timer />
-        {:else if activeTab === 'tasks'}
-          <TodoList />
-        {:else if activeTab === 'stats'}
-          <StatsDashboard />
-        {:else if activeTab === 'settings'}
-          <div class="space-y-8">
-            <ThemePicker {preferences} onUpdate={handlePrefsUpdate} />
-          </div>
-        {/if}
-      </div>
-    </div>
-
-    <TabBar {activeTab} onTabChange={handleTabChange} />
-  </main>
+        <TabBar {activeTab} onTabChange={handleTabChange} />
+    </main>
 {:else}
-  <div class="flex items-center justify-center h-full">
-    <p class="text-[var(--text-secondary)]">Loading...</p>
-  </div>
+    <div class="flex items-center justify-center h-full">
+        <p class="text-(--text-secondary)">Loading...</p>
+    </div>
 {/if}
 
 <style>
-  :global(body) {
-    margin: 0;
-    padding: 0;
-  }
+    :global(body) {
+        margin: 0;
+        padding: 0;
+    }
 </style>

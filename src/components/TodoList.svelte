@@ -102,11 +102,11 @@ const flipDurationMs = 200;
         </svg>
       </button>
     </div>
-    
-    <div class="flex gap-3 px-1 pb-7 overflow-x-auto scrollbar-none">
+
+    <div class="flex gap-3 px-1 overflow-x-auto scrollbar-none">
       {#each ['Work', 'Personal', 'Study'] as cat}
         <button
-          class="text-[10px] font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-full transition-all 
+          class="text-[10px] font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-full transition-all
                  {newTaskCategory === cat ? 'bg-accent text-white shadow-[var(--shadow-ambient)]' : 'bg-surface shadow-[var(--shadow-ambient)] text-text-tertiary hover:text-text-secondary'}"
           on:click={() => (newTaskCategory = cat)}
         >

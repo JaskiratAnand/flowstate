@@ -23,7 +23,7 @@ const tabs: { id: TabType; label: string; icon: string }[] = [
 ];
 </script>
 
-<nav class="fixed bottom-0 w-full px-8 pb-5 pt-4 flex justify-between items-center bg-gradient-to-t from-bg-primary via-bg-primary to-transparent pointer-events-none">
+<nav class="fixed bottom-0 w-full px-8 pb-5 pt-12 flex justify-between items-end bg-gradient-to-t from-bg-primary via-bg-primary/90 to-transparent pointer-events-none">
   {#each tabs as tab}
     <button
       class="w-14 h-14 flex items-center justify-center rounded-full transition-all pointer-events-auto
