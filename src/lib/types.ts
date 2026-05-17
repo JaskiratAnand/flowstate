@@ -35,12 +35,14 @@ export interface Stats {
   lastActiveDate: string; // YYYY-MM-DD to track streak reset
 }
 
-export type Theme = 'ocean' | 'forest' | 'sunset';
+export type Theme = 'ocean' | 'forest' | 'sunset' | 'custom';
 export type TabType = 'timer' | 'tasks' | 'stats';
+export type ColorScheme = 'light' | 'dark' | 'system';
 
 export interface UserPreferences {
   theme: Theme;
-  darkMode: boolean;
+  customAccentColor?: string;
+  colorScheme: ColorScheme;
   lastActiveTab: TabType;
 }
 

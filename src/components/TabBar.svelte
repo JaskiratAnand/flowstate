@@ -11,21 +11,14 @@ const tabs: { id: TabType; label: string; icon: string }[] = [
 ];
 </script>
 
-<nav class="flex border-t border-[var(--border)] bg-[var(--surface)]">
+<nav class="flex p-2 gap-1 bg-bg-secondary border-t border-border">
   {#each tabs as tab}
     <button
-      class="flex-1 py-3 flex flex-col items-center gap-1 transition-colors {activeTab === tab.id ? 'text-[var(--accent)] font-medium' : 'text-[var(--text-secondary)]'}"
+      class="flex-1 py-3 flex flex-col items-center gap-1 rounded-2xl transition-all {activeTab === tab.id ? 'bg-bg-primary text-accent shadow-sm' : 'text-text-tertiary hover:text-text-secondary hover:bg-bg-primary/50'}"
       on:click={() => onTabChange(tab.id)}
     >
-      <span class="text-xl">{tab.icon}</span>
-      <span class="text-xs">{tab.label}</span>
+      <span class="text-lg transition-transform {activeTab === tab.id ? 'scale-110' : 'grayscale opacity-70'}">{tab.icon}</span>
+      <span class="text-[9px] font-bold uppercase tracking-widest">{tab.label}</span>
     </button>
   {/each}
 </nav>
-
-<style>
-  button:hover {
-    background-color: var(--surface);
-    opacity: 0.8;
-  }
-</style>

@@ -20,30 +20,45 @@ function handleStorageChange(changes: Record<string, any>, areaName: string) {
     stats = changes[STORAGE_KEYS.STATS].newValue;
   }
 }
+
+const cards = [
+  { label: 'Current Streak', key: 'currentStreak', unit: 'days', icon: '🔥' },
+  {
+    label: "Today's Focus",
+    key: 'dailyPomodoros',
+    unit: 'sessions',
+    icon: '⏱️',
+  },
+  {
+    label: 'Tasks Completed',
+    key: 'dailyTasksCompleted',
+    unit: 'tasks',
+    icon: '✅',
+  },
+  {
+    label: 'All-Time Total',
+    key: 'allTimePomodoros',
+    unit: 'sessions',
+    icon: '🏆',
+  },
+];
 </script>
 
 <div class="grid grid-cols-2 gap-4">
-  <div class="p-4 bg-[var(--surface)] border border-[var(--border)] rounded-2xl flex flex-col gap-1">
-    <span class="text-[10px] uppercase font-bold tracking-wider opacity-60">Daily Streak</span>
-    <span class="text-3xl font-bold">{stats?.currentStreak || 0}</span>
-    <span class="text-[10px] opacity-60">days active</span>
-  </div>
-
-  <div class="p-4 bg-[var(--surface)] border border-[var(--border)] rounded-2xl flex flex-col gap-1">
-    <span class="text-[10px] uppercase font-bold tracking-wider opacity-60">Today's Focus</span>
-    <span class="text-3xl font-bold">{stats?.dailyPomodoros || 0}</span>
-    <span class="text-[10px] opacity-60">sessions</span>
-  </div>
-
-  <div class="p-4 bg-[var(--surface)] border border-[var(--border)] rounded-2xl flex flex-col gap-1">
-    <span class="text-[10px] uppercase font-bold tracking-wider opacity-60">Daily Tasks</span>
-    <span class="text-3xl font-bold">{stats?.dailyTasksCompleted || 0}</span>
-    <span class="text-[10px] opacity-60">completed</span>
-  </div>
-
-  <div class="p-4 bg-[var(--surface)] border border-[var(--border)] rounded-2xl flex flex-col gap-1">
-    <span class="text-[10px] uppercase font-bold tracking-wider opacity-60">Total Sessions</span>
-    <span class="text-3xl font-bold">{stats?.allTimePomodoros || 0}</span>
-    <span class="text-[10px] opacity-60">all-time</span>
-  </div>
+  {#each cards as card}
+    <div class="p-5 bg-bg-secondary border border-border rounded-[24px] flex flex-col gap-4 group hover:border-accent transition-all hover:shadow-md">
+      <div class="w-10 h-10 rounded-xl bg-bg-primary border border-border flex items-center justify-center text-xl group-hover:bg-accent-soft transition-colors">
+        {card.icon}
+      </div>
+      <div class="flex flex-col">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-text-tertiary mb-1">{card.label}</span>
+        <div class="flex items-baseline gap-1">
+          <span class="text-3xl font-bold tracking-tight text-text-primary">
+            {stats ? (stats as any)[card.key] : 0}
+          </span>
+          <span class="text-[10px] font-medium text-text-tertiary">{card.unit}</span>
+        </div>
+      </div>
+    </div>
+  {/each}
 </div>

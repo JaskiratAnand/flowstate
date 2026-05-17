@@ -31,7 +31,7 @@ async function addTask() {
     createdAt: Date.now(),
   };
 
-  items = [...items, newTask];
+  items = [newTask, ...items];
   newTaskText = '';
   await sync();
 }
@@ -80,28 +80,32 @@ function handleDndFinalize(e: CustomEvent<{ items: Task[] }>) {
 const flipDurationMs = 200;
 </script>
 
-<div class="flex flex-col h-full gap-4">
-  <div class="flex flex-col gap-2 p-1">
-    <div class="flex gap-2">
+<div class="flex flex-col h-full gap-6">
+  <div class="space-y-3">
+    <div class="relative">
       <input
         type="text"
         bind:value={newTaskText}
-        placeholder="Add a task..."
+        placeholder="What's on your mind?"
         on:keydown={(e) => e.key === 'Enter' && addTask()}
-        class="flex-1 bg-[var(--surface)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--accent)] outline-none"
+        class="w-full bg-bg-secondary border border-border rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none transition-all placeholder:text-text-tertiary"
       />
       <button
         on:click={addTask}
-        class="bg-[var(--accent)] text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm"
+        class="absolute right-3 top-1/2 -translate-y-1/2 bg-accent text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-accent-soft active:scale-95 transition-all"
+        aria-label="Add task"
       >
-        Add
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
       </button>
     </div>
     
-    <div class="flex gap-2">
+    <div class="flex gap-2 px-1">
       {#each ['Work', 'Personal', 'Study'] as cat}
         <button
-          class="text-[10px] uppercase font-bold px-2 py-1 rounded border transition-colors {newTaskCategory === cat ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-[var(--surface)] border-[var(--border)] text-[var(--text-secondary)]'}"
+          class="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-all {newTaskCategory === cat ? 'bg-text-primary border-text-primary text-bg-primary' : 'bg-transparent border-border text-text-tertiary hover:border-border-strong'}"
           on:click={() => (newTaskCategory = cat)}
         >
           {cat}
@@ -111,7 +115,7 @@ const flipDurationMs = 200;
   </div>
 
   <div
-    class="flex-1 overflow-y-auto space-y-2 p-1"
+    class="flex-1 overflow-y-auto space-y-3 min-h-[100px]"
     use:dndzone={{ items, flipDurationMs }}
     on:consider={handleDndConsider}
     on:finalize={handleDndFinalize}

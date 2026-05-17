@@ -38,7 +38,7 @@ export default defineBackground(() => {
     if (!existingPrefs) {
       await setStorageItem('USER_PREFERENCES', {
         theme: 'ocean',
-        darkMode: false,
+        colorScheme: 'system',
         lastActiveTab: 'timer',
       });
     }
