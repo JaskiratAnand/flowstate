@@ -1,0 +1,31 @@
+@import "../../styles/themes.css";
+@import "tailwindcss";
+
+body {
+    @apply bg-(--bg-primary) text-(--text-primary) transition-colors duration-200;
+    width: 380px;
+    min-height: 580px;
+    margin: 0;
+    font-family:
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+}
+
+#app {
+    height: 580px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}

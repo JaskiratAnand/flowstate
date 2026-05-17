@@ -1,0 +1,46 @@
+{
+  "name": "wxt-svelte-starter",
+  "description": "manifest.json description",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "prebuild": "pnpm run format && pnpm run lint && pnpm run check && pnpm run test",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "oxlint -c .oxlintrc.json .",
+    "format": "biome format --write .",
+    "postinstall": "wxt prepare"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.15",
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "@tailwindcss/vite": "^4.3.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/svelte": "^5.3.1",
+    "@tsconfig/svelte": "^5.0.8",
+    "@wxt-dev/module-svelte": "^2.0.4",
+    "autoprefixer": "^10.5.0",
+    "jsdom": "^29.1.1",
+    "oxlint": "^1.65.0",
+    "postcss": "^8.5.14",
+    "svelte": "^5.53.7",
+    "svelte-check": "^4.4.4",
+    "tailwindcss": "^4.3.0",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.6",
+    "wxt": "^0.20.26"
+  },
+  "dependencies": {
+    "nanoid": "^5.1.11",
+    "svelte-dnd-action": "^0.9.69"
+  }
+}
