@@ -87,7 +87,7 @@ function handleDialClick() {
   </header>
 
   <!-- Main Dial Area -->
-  <main class="flex flex-col items-center justify-center relative mb-12">
+  <main class="flex flex-col items-center justify-center relative">
     <button 
       class="relative w-[220px] h-[220px] rounded-full bg-surface flex items-center justify-center transition-all duration-300 group select-none active:scale-[0.98]
              {state?.status === 'running' ? 'shadow-[var(--shadow-ambient)]' : 'shadow-[var(--shadow-pressed)]'}"
@@ -124,6 +124,16 @@ function handleDialClick() {
     </button>
   </main>
 
+  <!-- Session Progress Dots -->
+  <div class="py-10 flex gap-4">
+    {#each Array(4) as _, i}
+      <div 
+        class="w-3 h-3 rounded-full transition-all duration-500
+               { (state?.completedSessions || 0) % 4 > i ? 'bg-accent shadow-[0_0_12px_var(--accent-soft)] scale-110' : 'bg-bg-secondary shadow-[var(--shadow-pressed)]'}"
+      ></div>
+    {/each}
+  </div>
+
   <!-- Quick Actions -->
   <div class="flex items-center gap-8 mb-10">
     <button
@@ -135,6 +145,23 @@ function handleDialClick() {
         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
         <path d="M3 3v5h5"/>
       </svg>
+    </button>
+
+    <button
+      class="p-5 rounded-full bg-surface shadow-[var(--shadow-ambient)] text-accent transition-all active:shadow-[var(--shadow-pressed)] active:scale-95"
+      on:click={handleDialClick}
+      title={state?.status === 'running' ? 'Pause' : 'Start'}
+    >
+      {#if state?.status === 'running'}
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="4" width="3" height="16" />
+          <rect x="15" y="4" width="3" height="16" />
+        </svg>
+      {:else}
+        <svg class="w-6 h-6 translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3" />
+        </svg>
+      {/if}
     </button>
 
     <button
