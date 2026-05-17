@@ -39,33 +39,69 @@ export class WxtFeedbackAdapter implements FeedbackPort {
   async playChime(): Promise<void> {
     const OFFSCREEN_PATH = '/offscreen.html';
 
-    try {
-      // @ts-ignore
-      const contexts = (await (browser.runtime as any).getContexts({
-        contextTypes: ['OFFSCREEN_DOCUMENT'],
-      })) as any[];
-
-      if (contexts.length === 0) {
-        await (browser as any).offscreen.createDocument({
-          url: browser.runtime.getURL(OFFSCREEN_PATH),
-          reasons: ['AUDIO_PLAYBACK'],
-          justification: 'Play notification sound when timer ends',
-        });
-      }
-    } catch {
+    // 1. Try to use offscreen API if available (Chrome MV3)
+    if (typeof (browser as any).offscreen !== 'undefined') {
       try {
-        await (browser as any).offscreen.createDocument({
-          url: browser.runtime.getURL(OFFSCREEN_PATH),
-          reasons: ['AUDIO_PLAYBACK'],
-          justification: 'Play notification sound when timer ends',
-        });
+        // @ts-ignore
+        const contexts = (await (browser.runtime as any).getContexts({
+          contextTypes: ['OFFSCREEN_DOCUMENT'],
+        })) as any[];
+
+        if (contexts.length === 0) {
+          await (browser as any).offscreen.createDocument({
+            url: browser.runtime.getURL(OFFSCREEN_PATH),
+            reasons: ['AUDIO_PLAYBACK'],
+            justification: 'Play notification sound when timer ends',
+          });
+        }
       } catch {
-        // Ignore if already exists
+        try {
+          await (browser as any).offscreen.createDocument({
+            url: browser.runtime.getURL(OFFSCREEN_PATH),
+            reasons: ['AUDIO_PLAYBACK'],
+            justification: 'Play notification sound when timer ends',
+          });
+        } catch {
+          // Ignore if already exists
+        }
       }
     }
 
-    await browser.runtime.sendMessage({
-      type: 'PLAY_SOUND',
-    });
+    // 2. Send message - if offscreen is open, it will play.
+    // If we are in Firefox/MV2, the background page might be able to handle this message itself
+    // if we add a listener there, or we can try to play directly here if AudioContext exists.
+    try {
+      await browser.runtime.sendMessage({
+        type: 'PLAY_SOUND',
+      });
+    } catch {
+      // If no one is listening, try direct playback as fallback (for Firefox/MV2)
+      if (typeof window !== 'undefined' && (window as any).AudioContext) {
+        this.directChime();
+      }
+    }
+  }
+
+  private directChime() {
+    try {
+      // @ts-ignore
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const t = ctx.currentTime + i * 0.24;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.3, t + 0.06);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
+        osc.start(t);
+        osc.stop(t + 0.75);
+      });
+    } catch (e) {
+      console.error('Direct chime failed:', e);
+    }
   }
 }

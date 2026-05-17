@@ -8,9 +8,14 @@ export default defineConfig({
   vite: () => ({
     plugins: [tailwind()],
   }),
-  manifest: {
+  manifest: ({ browser }) => ({
     name: 'FlowState',
-    permissions: ['storage', 'alarms', 'notifications', 'offscreen'],
+    permissions: [
+      'storage',
+      'alarms',
+      'notifications',
+      ...(browser === 'firefox' ? [] : ['offscreen']),
+    ],
     action: {
       default_icon: 'icon/48.png',
     },
@@ -21,5 +26,5 @@ export default defineConfig({
       '96': 'icon/96.png',
       '128': 'icon/128.png',
     },
-  },
+  }),
 });
