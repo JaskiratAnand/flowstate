@@ -1,6 +1,6 @@
 {
-  "name": "wxt-svelte-starter",
-  "description": "manifest.json description",
+  "name": "focus-flow",
+  "description": "A tactile, sensory-focused Pomodoro & Todo browser extension that grounds digital work in analog warmth.",
   "private": true,
   "version": "0.0.0",
   "type": "module",

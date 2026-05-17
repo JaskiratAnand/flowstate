@@ -22,33 +22,33 @@ function handleStorageChange(changes: Record<string, any>, areaName: string) {
 }
 
 const cards = [
-  { 
-    label: 'Current Streak', 
-    key: 'currentStreak', 
-    unit: 'days', 
+  {
+    label: 'Current Streak',
+    key: 'currentStreak',
+    unit: 'days',
     icon: 'M13 10V3L4 14h7v7l9-11h-7z',
-    color: 'text-orange-500' 
+    color: 'text-orange-500',
   },
   {
     label: "Today's Focus",
     key: 'dailyPomodoros',
     unit: 'sessions',
     icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
-    color: 'text-accent'
+    color: 'text-accent',
   },
   {
     label: 'Tasks Done',
     key: 'dailyTasksCompleted',
     unit: 'tasks',
     icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
-    color: 'text-emerald-500'
+    color: 'text-emerald-500',
   },
   {
     label: 'All-Time Total',
     key: 'allTimePomodoros',
     unit: 'sessions',
     icon: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z',
-    color: 'text-amber-500'
+    color: 'text-amber-500',
   },
 ];
 </script>

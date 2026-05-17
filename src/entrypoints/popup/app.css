@@ -14,7 +14,7 @@
   --color-surface: var(--surface);
   
   --font-heading: "Fraunces", serif;
-  --font-body: "Karla", sans-serif;
+  --font-body: var(--font-main, "Karla"), sans-serif;
 }
 
 body {
@@ -22,11 +22,11 @@ body {
   width: 380px;
   min-height: 580px;
   margin: 0;
-  font-family: "Karla", sans-serif;
+  font-family: var(--font-main, "Karla"), sans-serif;
 }
 
 h1, h2, h3 {
-  font-family: "Fraunces", serif;
+  font-family: var(--font-main, "Karla"), sans-serif;
 }
 
 #app {

@@ -80,7 +80,7 @@ function handleDndFinalize(e: CustomEvent<{ items: Task[] }>) {
 const flipDurationMs = 200;
 </script>
 
-<div class="flex flex-col h-full gap-8">
+<div class="flex flex-col h-full gap-2">
   <!-- New Task Input Section -->
   <div class="space-y-4">
     <div class="relative">
@@ -103,7 +103,7 @@ const flipDurationMs = 200;
       </button>
     </div>
     
-    <div class="flex gap-3 px-1 overflow-x-auto scrollbar-none">
+    <div class="flex gap-3 px-1 pb-7 overflow-x-auto scrollbar-none">
       {#each ['Work', 'Personal', 'Study'] as cat}
         <button
           class="text-[10px] font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-full transition-all 
@@ -118,7 +118,7 @@ const flipDurationMs = 200;
 
   <!-- Task List Section -->
   <div
-    class="flex-1 overflow-y-auto space-y-4 min-h-[100px] scrollbar-none pb-12"
+    class="flex-1 overflow-y-auto space-y-5 min-h-[100px] scrollbar-none pb-12"
     use:dndzone={{ items, flipDurationMs }}
     on:consider={handleDndConsider}
     on:finalize={handleDndFinalize}

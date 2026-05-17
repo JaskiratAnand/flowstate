@@ -37,8 +37,9 @@ export default defineBackground(() => {
     const existingPrefs = await getStorageItem('USER_PREFERENCES');
     if (!existingPrefs) {
       await setStorageItem('USER_PREFERENCES', {
-        theme: 'ocean',
+        theme: 'forest',
         colorScheme: 'system',
+        fontFamily: 'karla',
         lastActiveTab: 'timer',
       });
     }

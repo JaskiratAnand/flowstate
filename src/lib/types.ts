@@ -36,13 +36,15 @@ export interface Stats {
 }
 
 export type Theme = 'ocean' | 'forest' | 'sunset' | 'custom';
-export type TabType = 'timer' | 'tasks' | 'stats';
+export type TabType = 'timer' | 'tasks' | 'stats' | 'settings';
 export type ColorScheme = 'light' | 'dark' | 'system';
+export type FontFamily = 'karla' | 'fraunces' | 'mono' | 'system';
 
 export interface UserPreferences {
   theme: Theme;
   customAccentColor?: string;
   colorScheme: ColorScheme;
+  fontFamily: FontFamily;
   lastActiveTab: TabType;
 }
 

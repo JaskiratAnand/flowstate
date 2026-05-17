@@ -9,6 +9,13 @@ export default defineConfig({
     plugins: [tailwind()],
   }),
   manifest: {
+    name: 'FocusFlow',
     permissions: ['storage', 'alarms', 'notifications'],
+    action: {
+      default_icon: 'icon.svg',
+    },
+    icons: {
+      '128': 'icon/128.png',
+    },
   },
 });

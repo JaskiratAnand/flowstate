@@ -19,21 +19,26 @@
   --radius-lg: 24px;
   --radius-full: 9999px;
 
+  /* Theme Colors for Swatches */
+  --color-forest: #8A9A86;
+  --color-ocean: #7A90A4;
+  --color-sunset: #C17767;
+
   /* Default Theme (Forest) */
-  --accent: #8A9A86;
+  --accent: var(--color-forest);
   --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 [data-theme="forest"] {
-  --accent: #8A9A86;
+  --accent: var(--color-forest);
 }
 
 [data-theme="ocean"] {
-  --accent: #7A90A4;
+  --accent: var(--color-ocean);
 }
 
 [data-theme="sunset"] {
-  --accent: #C17767;
+  --accent: var(--color-sunset);
 }
 
 [data-dark="true"] {
@@ -52,10 +57,10 @@
   --shadow-ambient: 4px 6px 12px rgba(0, 0, 0, 0.4), -2px -2px 8px rgba(255, 255, 255, 0.05);
   --shadow-pressed: inset 4px 4px 8px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.03);
 
-  /* Dark Theme Accents */
-  &[data-theme="forest"] { --accent: #3A5A40; }
-  &[data-theme="ocean"] { --accent: #2B3A4A; }
-  &[data-theme="sunset"] { --accent: #D48C45; }
+  /* Dark Theme Accents (Vibrant/Fixed-Dim versions) */
+  --color-forest: #A3B18A;
+  --color-ocean: #93A8AC;
+  --color-sunset: #C17767;
 }
 
 /* Base utility for dynamic accent softness */

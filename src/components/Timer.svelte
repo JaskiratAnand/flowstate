@@ -57,15 +57,15 @@ $: label =
       ? 'Short Break'
       : 'Long Break';
 
-$: totalSeconds = config 
-  ? (state?.sessionType === 'work' 
-      ? config.workDuration 
-      : state?.sessionType === 'short-break' 
-        ? config.shortBreakDuration 
+$: totalSeconds = config
+  ? (state?.sessionType === 'work'
+      ? config.workDuration
+      : state?.sessionType === 'short-break'
+        ? config.shortBreakDuration
         : config.longBreakDuration) * 60
   : 25 * 60;
 
-$: progress = state ? (1 - state.remainingSeconds / totalSeconds) : 0;
+$: progress = state ? 1 - state.remainingSeconds / totalSeconds : 0;
 $: dashArray = 2 * Math.PI * 106; // radius = 106
 $: dashOffset = dashArray * (1 - progress);
 

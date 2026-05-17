@@ -5,13 +5,25 @@ export let activeTab: TabType;
 export let onTabChange: (tab: TabType) => void;
 
 const tabs: { id: TabType; label: string; icon: string }[] = [
-  { id: 'timer', label: 'Timer', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
-  { id: 'tasks', label: 'Tasks', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' },
-  { id: 'stats', label: 'Stats', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+  {
+    id: 'timer',
+    label: 'Timer',
+    icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+  },
+  {
+    id: 'tasks',
+    label: 'Tasks',
+    icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
+  },
+  {
+    id: 'stats',
+    label: 'Stats',
+    icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+  },
 ];
 </script>
 
-<nav class="fixed bottom-0 w-full px-10 pb-8 pt-4 flex justify-between items-center bg-gradient-to-t from-bg-primary via-bg-primary to-transparent pointer-events-none">
+<nav class="fixed bottom-0 w-full px-8 pb-5 pt-4 flex justify-between items-center bg-gradient-to-t from-bg-primary via-bg-primary to-transparent pointer-events-none">
   {#each tabs as tab}
     <button
       class="w-14 h-14 flex items-center justify-center rounded-full transition-all pointer-events-auto
