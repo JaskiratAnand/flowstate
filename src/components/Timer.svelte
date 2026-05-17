@@ -125,7 +125,7 @@ function handleDialClick() {
   </main>
 
   <!-- Session Progress Dots -->
-  <div class="py-10 flex gap-4">
+  <div class="py-6 flex gap-4">
     {#each Array(4) as _, i}
       <div 
         class="w-3 h-3 rounded-full transition-all duration-500
