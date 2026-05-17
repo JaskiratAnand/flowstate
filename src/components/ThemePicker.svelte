@@ -22,7 +22,12 @@ const modes: { id: ColorScheme; icon: string; label: string }[] = [
   { id: 'system', icon: '💻', label: 'System' },
 ];
 
-const fonts: { id: FontFamily; label: string; class: string; isPro?: boolean }[] = [
+const fonts: {
+  id: FontFamily;
+  label: string;
+  class: string;
+  isPro?: boolean;
+}[] = [
   { id: 'karla', label: 'Sans', class: 'font-[Karla]' },
   { id: 'fraunces', label: 'Serif', class: 'font-[Fraunces]', isPro: true },
   { id: 'mono', label: 'Mono', class: 'font-["JetBrains_Mono"]', isPro: true },
@@ -81,11 +86,13 @@ function handleCustomColorChange(e: Event) {
            </svg>
         </div>
         <input
+          id="custom-color-pro"
           type="color"
           disabled
           class="absolute inset-0 w-full h-full opacity-0 cursor-not-allowed z-20"
         />
         <label
+          for="custom-color-pro"
           class="flex items-center justify-center w-11 h-11 rounded-full border-4 border-transparent shadow-[var(--shadow-ambient)] bg-bg-primary"
         >
           <svg 
