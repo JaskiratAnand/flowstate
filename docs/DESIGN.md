@@ -12,7 +12,7 @@
 
 ## The Three Pillars (Themes)
 
-FocusFlow features three distinct colorways, each rooted in a natural environment. These themes are applied to the core "Organic Studio" aesthetic (Paper backgrounds, Tactile shadows).
+FlowState features three distinct colorways, each rooted in a natural environment. These themes are applied to the core "Organic Studio" aesthetic (Paper backgrounds, Tactile shadows).
 
 ### 1. Forest (Default)
 *Inspiration: Moss, pine needles, and morning mist.*
