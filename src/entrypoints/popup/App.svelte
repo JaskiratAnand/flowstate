@@ -1,104 +1,105 @@
 <script lang="ts">
-import { onMount, onDestroy } from 'svelte';
-import type { TabType, UserPreferences } from '../../lib/types';
-import { getStorageItem, setStorageItem } from '../../lib/storage';
-import TabBar from '../../components/TabBar.svelte';
-import ThemePicker from '../../components/ThemePicker.svelte';
+    import { onMount, onDestroy } from "svelte";
+    import type { TabType, UserPreferences } from "../../lib/types";
+    import { getStorageItem, setStorageItem } from "../../lib/storage";
+    import TabBar from "../../components/TabBar.svelte";
+    import ThemePicker from "../../components/ThemePicker.svelte";
 
-// Placeholder components
-import Timer from '../../components/Timer.svelte';
-import TodoList from '../../components/TodoList.svelte';
-import StatsDashboard from '../../components/StatsDashboard.svelte';
+    // Placeholder components
+    import Timer from "../../components/Timer.svelte";
+    import TodoList from "../../components/TodoList.svelte";
+    import StatsDashboard from "../../components/StatsDashboard.svelte";
+    import About from "../../components/About.svelte";
 
-let activeTab: TabType = 'timer';
-let preferences: UserPreferences | null = null;
-let systemDarkMode = false;
-let mediaQuery: MediaQueryList;
+    let activeTab: TabType = "timer";
+    let preferences: UserPreferences | null = null;
+    let systemDarkMode = false;
+    let mediaQuery: MediaQueryList;
 
-function handleSystemThemeChange(e: MediaQueryListEvent | MediaQueryList) {
-  systemDarkMode = e.matches;
-}
+    function handleSystemThemeChange(e: MediaQueryListEvent | MediaQueryList) {
+        systemDarkMode = e.matches;
+    }
 
-onMount(async () => {
-  let prefs = await getStorageItem('USER_PREFERENCES');
-  if (!prefs) {
-    prefs = {
-      theme: 'forest',
-      colorScheme: 'system',
-      fontFamily: 'karla',
-      lastActiveTab: 'timer',
-    };
-  }
-  // migration for existing users
-  if (!prefs.fontFamily) prefs.fontFamily = 'karla';
+    onMount(async () => {
+        let prefs = await getStorageItem("USER_PREFERENCES");
+        if (!prefs) {
+            prefs = {
+                theme: "forest",
+                colorScheme: "system",
+                fontFamily: "karla",
+                lastActiveTab: "timer",
+            };
+        }
+        // migration for existing users
+        if (!prefs.fontFamily) prefs.fontFamily = "karla";
 
-  preferences = prefs;
-  activeTab = prefs.lastActiveTab;
+        preferences = prefs;
+        activeTab = prefs.lastActiveTab;
 
-  // System theme detection
-  mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  handleSystemThemeChange(mediaQuery);
-  mediaQuery.addEventListener('change', handleSystemThemeChange);
+        // System theme detection
+        mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        handleSystemThemeChange(mediaQuery);
+        mediaQuery.addEventListener("change", handleSystemThemeChange);
 
-  applyTheme(prefs);
-});
+        applyTheme(prefs);
+    });
 
-onDestroy(() => {
-  if (mediaQuery) {
-    mediaQuery.removeEventListener('change', handleSystemThemeChange);
-  }
-});
+    onDestroy(() => {
+        if (mediaQuery) {
+            mediaQuery.removeEventListener("change", handleSystemThemeChange);
+        }
+    });
 
-$: effectiveDarkMode =
-  preferences?.colorScheme === 'system'
-    ? systemDarkMode
-    : preferences?.colorScheme === 'dark';
+    $: effectiveDarkMode =
+        preferences?.colorScheme === "system"
+            ? systemDarkMode
+            : preferences?.colorScheme === "dark";
 
-$: if (preferences) {
-  applyTheme(preferences);
-}
+    $: if (preferences) {
+        applyTheme(preferences);
+    }
 
-function applyTheme(prefs: UserPreferences) {
-  document.documentElement.setAttribute('data-theme', prefs.theme);
-  document.documentElement.setAttribute(
-    'data-dark',
-    effectiveDarkMode.toString(),
-  );
+    function applyTheme(prefs: UserPreferences) {
+        document.documentElement.setAttribute("data-theme", prefs.theme);
+        document.documentElement.setAttribute(
+            "data-dark",
+            effectiveDarkMode.toString(),
+        );
 
-  // Font mapping
-  const fonts: Record<string, string> = {
-    karla: '"Karla", sans-serif',
-    fraunces: '"Fraunces", serif',
-    mono: '"JetBrains Mono", monospace',
-    system: 'system-ui, sans-serif',
-  };
-  document.documentElement.style.setProperty(
-    '--font-main',
-    fonts[prefs.fontFamily] || fonts.karla,
-  );
+        // Font mapping
+        const fonts: Record<string, string> = {
+            karla: '"Karla", sans-serif',
+            fraunces: '"Fraunces", serif',
+            mono: '"JetBrains Mono", monospace',
+            system: "system-ui, sans-serif",
+        };
+        document.documentElement.style.setProperty(
+            "--font-main",
+            fonts[prefs.fontFamily] || fonts.karla,
+        );
 
-  if (prefs.theme === 'custom' && prefs.customAccentColor) {
-    document.documentElement.style.setProperty(
-      '--accent',
-      prefs.customAccentColor,
-    );
-  } else {
-    document.documentElement.style.removeProperty('--accent');
-  }
-}
-async function handleTabChange(tab: TabType) {
-  activeTab = tab;
-  if (preferences) {
-    const newPrefs = { ...preferences, lastActiveTab: tab };
-    preferences = newPrefs;
-    await setStorageItem('USER_PREFERENCES', newPrefs);
-  }
-}
+        if (prefs.theme === "custom" && prefs.customAccentColor) {
+            document.documentElement.style.setProperty(
+                "--accent",
+                prefs.customAccentColor,
+            );
+        } else {
+            document.documentElement.style.removeProperty("--accent");
+        }
+    }
+    async function handleTabChange(tab: TabType) {
+        activeTab = tab;
+        if (preferences) {
+            const newPrefs = { ...preferences, lastActiveTab: tab };
+            preferences = newPrefs;
+            await setStorageItem("USER_PREFERENCES", newPrefs);
+        }
+    }
 
-function handlePrefsUpdate(newPrefs: UserPreferences) {
-  preferences = newPrefs;
-  applyTheme(newPrefs);
-}
+    function handlePrefsUpdate(newPrefs: UserPreferences) {
+        preferences = newPrefs;
+        applyTheme(newPrefs);
+    }
 </script>
 
 {#if preferences}
@@ -106,10 +107,17 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
         class="flex flex-col h-full bg-bg-primary transition-colors duration-500 overflow-hidden"
     >
         <!-- Minimalist Header -->
-        <header class="h-16 px-8 flex items-center justify-between z-10">
-            <div class="flex items-center gap-3 group">
+        <header class="h-16 pt-4 px-8 flex items-center justify-between z-10">
+            <button
+                class="flex items-center gap-3 group text-left"
+                on:click={() => handleTabChange("about")}
+                aria-label="About FlowState"
+            >
                 <div
-                    class="w-9 h-9 rounded-xl bg-surface shadow-(--shadow-ambient) flex items-center justify-center transition-all group-hover:scale-105 active:shadow-(--shadow-pressed)"
+                    class="w-9 h-9 rounded-xl bg-surface shadow-(--shadow-ambient) flex items-center justify-center transition-all group-hover:scale-105 active:shadow-(--shadow-pressed) {activeTab ===
+                    'about'
+                        ? 'text-accent shadow-(--shadow-pressed)'
+                        : 'text-accent'}"
                 >
                     <svg
                         class="w-5 h-5 text-accent"
@@ -131,7 +139,7 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
                         : activeTab.charAt(0).toUpperCase() +
                           activeTab.slice(1)}
                 </h1>
-            </div>
+            </button>
 
             <button
                 class="w-9 h-9 rounded-xl bg-surface shadow-(--shadow-ambient) flex items-center justify-center transition-all hover:scale-105 active:shadow-(--shadow-pressed) {activeTab ===
@@ -158,7 +166,7 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
             </button>
         </header>
 
-        <div class="flex-1 overflow-hidden px-8 py-4">
+        <div class="flex-1 overflow-hidden px-8 pt-2 pb-4">
             <div
                 class="tab-content h-full pb-1 overflow-y-auto scrollbar-none animate-in fade-in duration-700"
             >
@@ -168,6 +176,8 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
                     <TodoList />
                 {:else if activeTab === "stats"}
                     <StatsDashboard />
+                {:else if activeTab === "about"}
+                    <About />
                 {:else if activeTab === "settings"}
                     <div class="space-y-8">
                         <ThemePicker

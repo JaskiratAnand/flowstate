@@ -72,7 +72,7 @@ function handleDialClick() {
 
 <div class="flex flex-col items-center pb-20">
     <!-- Mode Label -->
-    <header class="pt-2 pb-8 text-center">
+    <header class="pt-0 pb-4 text-center">
         <h1
             class="text-text-tertiary text-[12px] font-bold tracking-[0.2em] uppercase"
         >

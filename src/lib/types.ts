@@ -36,7 +36,7 @@ export interface Stats {
 }
 
 export type Theme = 'ocean' | 'forest' | 'sunset' | 'custom';
-export type TabType = 'timer' | 'tasks' | 'stats' | 'settings';
+export type TabType = 'timer' | 'tasks' | 'stats' | 'settings' | 'about';
 export type ColorScheme = 'light' | 'dark' | 'system';
 export type FontFamily = 'karla' | 'fraunces' | 'mono' | 'system';
 
