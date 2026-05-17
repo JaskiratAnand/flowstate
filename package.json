@@ -17,7 +17,9 @@
     "test:watch": "vitest",
     "lint": "oxlint -c .oxlintrc.json .",
     "fmt": "biome format --write .",
-    "postinstall": "wxt prepare"
+    "postinstall": "wxt prepare",
+    "preversion": "pnpm run prebuild && pnpm test",
+    "postversion": "echo \"Version bumped. Update CHANGELOG.md, then run: git push && git push --tags\""
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.15",

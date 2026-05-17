@@ -36,6 +36,35 @@ Ensure you have `pnpm` installed.
 - **Formatting:** `pnpm fmt` (Runs Biome format).
 - **Type Checking:** `pnpm check` (Runs svelte-check).
 
+## Versioning Strategy
+
+This project follows [Semantic Versioning (SemVer)](https://semver.org/).
+
+- **Source of Truth:** The `version` field in `package.json`.
+- **Changelog:** All notable changes must be documented in `CHANGELOG.md` following the [Keep a Changelog](https://keepachangelog.com/) format.
+- **Workflow:**
+  1. Ensure you are on the `main` branch and it's up to date.
+  2. Run `pnpm version <patch|minor|major>`. This will:
+     - Run `prebuild` (lint, format, check) and `test` via the `preversion` hook.
+     - Bump the version in `package.json`.
+     - Create a git commit and tag automatically.
+  3. Update `CHANGELOG.md` with the new version and date.
+  4. Push changes and tags: `git push && git push --tags`.
+
+## Git Branching Strategy
+
+FlowState uses a simplified GitHub Flow for versioning and releases:
+
+- **`main` Branch (Stable):** Always reflects the current or next stable release. All commits to `main` should ideally be associated with a version bump or documentation update.
+- **Feature/Fix Branches:** Use short-lived branches for development (e.g., `feat/timer-sounds`, `fix/styling-glitch`).
+- **Release Process:**
+  1. Merge your feature branch into `main`.
+  2. Switch to `main` and run `pnpm version <patch|minor|major>`.
+  3. Update `CHANGELOG.md` (move items from `[Unreleased]` to a new version header).
+  4. Commit changelog changes: `git add CHANGELOG.md && git commit -m "docs: update changelog"`.
+  5. Push: `git push && git push --tags`.
+  6. Build for production: `pnpm zip`.
+
 ## Development Conventions
 
 ### Styling & Design
