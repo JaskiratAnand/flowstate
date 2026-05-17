@@ -1,5 +1,6 @@
 <script lang="ts">
 import { onMount } from 'svelte';
+import { flip } from 'svelte/animate';
 import { dndzone } from 'svelte-dnd-action';
 import { nanoid } from 'nanoid';
 import { getStorageItem, setStorageItem } from '../lib/storage';
@@ -53,9 +54,19 @@ async function toggleTask(id: string) {
       const nextStats = incrementTasksCompleted(stats, date);
       await setStorageItem('STATS', nextStats);
     }
-  }
 
-  await sync();
+    // Real-time sort: Move to bottom after a short delay
+    setTimeout(async () => {
+      const taskIndex = items.findIndex((t) => t.id === id);
+      if (taskIndex > -1) {
+        const [task] = items.splice(taskIndex, 1);
+        items = [...items, task];
+        await sync();
+      }
+    }, 300);
+  } else {
+    await sync();
+  }
 }
 
 async function deleteTask(id: string) {
@@ -77,7 +88,7 @@ function handleDndFinalize(e: CustomEvent<{ items: Task[] }>) {
   sync();
 }
 
-const flipDurationMs = 200;
+const flipDurationMs = 600;
 </script>
 
 <div class="flex flex-col h-full gap-2">
@@ -124,7 +135,7 @@ const flipDurationMs = 200;
     on:finalize={handleDndFinalize}
   >
     {#each items as item (item.id)}
-      <div class="outline-none">
+      <div class="outline-none" animate:flip={{ duration: flipDurationMs }}>
         <TodoItem
           task={item}
           onToggle={toggleTask}

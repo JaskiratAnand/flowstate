@@ -33,6 +33,10 @@ onMount(async () => {
   // migration for existing users
   if (!prefs.fontFamily) prefs.fontFamily = 'karla';
 
+  // Lock pro features if active
+  if (prefs.theme === 'custom') prefs.theme = 'forest';
+  if (prefs.fontFamily !== 'karla') prefs.fontFamily = 'karla';
+
   preferences = prefs;
   activeTab = prefs.lastActiveTab;
 
