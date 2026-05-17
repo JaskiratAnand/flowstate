@@ -12,14 +12,14 @@ export default defineConfig({
     name: 'FlowState',
     permissions: ['storage', 'alarms', 'notifications', 'offscreen'],
     action: {
-      default_icon: 'icon.svg',
+      default_icon: 'icon/48.png',
     },
     icons: {
-      '16': 'icon.svg',
-      '32': 'icon.svg',
-      '48': 'icon.svg',
-      '96': 'icon.svg',
-      '128': 'icon.svg',
+      '16': 'icon/16.png',
+      '32': 'icon/32.png',
+      '48': 'icon/48.png',
+      '96': 'icon/96.png',
+      '128': 'icon/128.png',
     },
   },
 });
