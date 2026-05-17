@@ -56,73 +56,108 @@ $: label =
     : state?.sessionType === 'short-break'
       ? 'Short Break'
       : 'Long Break';
+
+$: totalSeconds = config 
+  ? (state?.sessionType === 'work' 
+      ? config.workDuration 
+      : state?.sessionType === 'short-break' 
+        ? config.shortBreakDuration 
+        : config.longBreakDuration) * 60
+  : 25 * 60;
+
+$: progress = state ? (1 - state.remainingSeconds / totalSeconds) : 0;
+$: dashArray = 2 * Math.PI * 106; // radius = 106
+$: dashOffset = dashArray * (1 - progress);
+
+function handleDialClick() {
+  if (state?.status === 'running') {
+    sendMessage('PAUSE_TIMER');
+  } else {
+    sendMessage('START_TIMER');
+  }
+}
 </script>
 
-<div class="flex flex-col items-center py-8">
-  <div class="flex flex-col items-center mb-12">
-    <div class="px-3 py-1 mb-4 rounded-full bg-accent-soft text-accent text-[10px] font-bold uppercase tracking-widest border border-accent/20">
+<div class="flex flex-col items-center">
+  <!-- Mode Label -->
+  <header class="pt-2 pb-8 text-center">
+    <h1 class="text-text-tertiary text-[12px] font-bold tracking-[0.2em] uppercase">
       {label}
-    </div>
-    <div class="text-[84px] font-light tabular-nums leading-none tracking-tight text-text-primary">
-      {state ? formatTime(state.remainingSeconds) : '25:00'}
-    </div>
-  </div>
+    </h1>
+  </header>
 
-  <div class="flex items-center gap-6 mb-12">
+  <!-- Main Dial Area -->
+  <main class="flex flex-col items-center justify-center relative mb-12">
+    <button 
+      class="relative w-[220px] h-[220px] rounded-full bg-surface flex items-center justify-center transition-all duration-300 group select-none active:scale-[0.98]
+             {state?.status === 'running' ? 'shadow-[var(--shadow-ambient)]' : 'shadow-[var(--shadow-pressed)]'}"
+      on:click={handleDialClick}
+      aria-label={state?.status === 'running' ? 'Pause' : 'Start'}
+    >
+      <!-- SVG Progress Ring -->
+      <svg class="absolute inset-0 w-full h-full pointer-events-none -rotate-90" viewBox="0 0 220 220">
+        <!-- Track -->
+        <circle 
+          cx="110" cy="110" r="106" 
+          fill="transparent" 
+          stroke="currentColor" 
+          stroke-width="4"
+          class="text-border opacity-20"
+        />
+        <!-- Progress -->
+        <circle 
+          cx="110" cy="110" r="106" 
+          fill="transparent" 
+          stroke="var(--accent)" 
+          stroke-width="4"
+          stroke-linecap="round"
+          style="stroke-dasharray: {dashArray}; stroke-dashoffset: {dashOffset};"
+          class="transition-all duration-1000 ease-linear {state?.status === 'running' ? 'opacity-100' : 'opacity-0'}"
+        />
+      </svg>
+
+      <!-- Timer Display -->
+      <div class="timer-text text-text-primary text-[56px] font-light tracking-tight tabular-nums transition-opacity duration-300
+                  {state?.status === 'paused' ? 'opacity-50 animate-pulse' : 'opacity-100'}">
+        {state ? formatTime(state.remainingSeconds) : '25:00'}
+      </div>
+    </button>
+  </main>
+
+  <!-- Quick Actions -->
+  <div class="flex items-center gap-8 mb-10">
     <button
-      class="p-4 rounded-full bg-bg-secondary border border-border hover:border-border-strong transition-all active:scale-95"
+      class="p-4 rounded-full bg-surface shadow-[var(--shadow-ambient)] text-text-tertiary hover:text-text-primary transition-all active:shadow-[var(--shadow-pressed)] active:scale-95"
       on:click={() => sendMessage('RESET_TIMER')}
       title="Reset"
     >
-      <svg class="w-5 h-5 text-text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
         <path d="M3 3v5h5"/>
       </svg>
     </button>
 
-    {#if state?.status === 'running'}
-      <button
-        class="w-20 h-20 rounded-full bg-text-primary text-bg-primary flex items-center justify-center shadow-xl transition-all hover:scale-105 active:scale-95"
-        on:click={() => sendMessage('PAUSE_TIMER')}
-        aria-label="Pause"
-      >
-        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-          <rect x="6" y="4" width="4" height="16" rx="1"/>
-          <rect x="14" y="4" width="4" height="16" rx="1"/>
-        </svg>
-      </button>
-    {:else}
-      <button
-        class="w-20 h-20 rounded-full bg-accent text-white flex items-center justify-center shadow-xl shadow-accent-soft transition-all hover:scale-105 active:scale-95"
-        on:click={() => sendMessage('START_TIMER')}
-        aria-label="Start"
-      >
-        <svg class="w-8 h-8 ml-1" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M5 3l14 9-14 9V3z"/>
-        </svg>
-      </button>
-    {/if}
-
     <button
-      class="p-4 rounded-full bg-bg-secondary border border-border hover:border-border-strong transition-all active:scale-95"
+      class="p-4 rounded-full bg-surface shadow-[var(--shadow-ambient)] text-text-tertiary hover:text-text-primary transition-all active:shadow-[var(--shadow-pressed)] active:scale-95"
       on:click={() => sendMessage('SKIP_SESSION')}
       title="Skip"
     >
-      <svg class="w-5 h-5 text-text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 4l10 8-10 8V4z"/>
         <line x1="19" y1="5" x2="19" y2="19"/>
       </svg>
     </button>
   </div>
 
+  <!-- Settings Expandable -->
   <div class="w-full">
     <button 
-      class="w-full py-4 px-5 flex items-center justify-between rounded-2xl bg-bg-secondary border border-border hover:bg-surface transition-colors"
+      class="w-full py-4 px-6 flex items-center justify-between rounded-2xl bg-surface shadow-[var(--shadow-ambient)] hover:bg-bg-primary transition-all active:shadow-[var(--shadow-pressed)]"
       on:click={() => (showConfig = !showConfig)}
     >
-      <span class="text-sm font-medium text-text-secondary">Timer Settings</span>
+      <span class="text-sm font-semibold text-text-secondary">Adjust Durations</span>
       <svg 
-        class="w-4 h-4 text-text-tertiary transition-transform {showConfig ? 'rotate-180' : ''}" 
+        class="w-4 h-4 text-text-tertiary transition-transform duration-300 {showConfig ? 'rotate-180' : ''}" 
         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
       >
         <path d="m6 9 6 6 6-6"/>
@@ -130,7 +165,7 @@ $: label =
     </button>
     
     {#if showConfig && config}
-      <div class="mt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+      <div class="mt-4 animate-in fade-in slide-in-from-top-4 duration-500">
         <TimerConfigComp bind:config />
       </div>
     {/if}

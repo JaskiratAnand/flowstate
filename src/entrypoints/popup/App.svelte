@@ -86,33 +86,36 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
 </script>
 
 {#if preferences}
-  <main class="flex flex-col h-full overflow-hidden">
-    <header class="h-16 px-6 flex items-center justify-between border-b border-border bg-bg-primary/80 backdrop-blur-md sticky top-0 z-10">
-      <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-xl bg-accent flex items-center justify-center shadow-lg shadow-accent-soft">
-          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <main class="flex flex-col h-full bg-bg-primary transition-colors duration-500 overflow-hidden">
+    <!-- Minimalist Header -->
+    <header class="h-16 px-8 flex items-center justify-between z-10">
+      <div class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-xl bg-surface shadow-[var(--shadow-ambient)] flex items-center justify-center transition-all group-hover:scale-105 active:shadow-[var(--shadow-pressed)]">
+          <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
           </svg>
         </div>
-        <h1 class="text-lg font-bold tracking-tight text-text-primary">FocusFlow</h1>
+        <h1 class="text-xl font-bold tracking-tight text-text-primary">FocusFlow</h1>
       </div>
-      <div class="flex items-center gap-2">
-        <div class="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
-        <span class="text-[10px] font-bold uppercase tracking-widest text-text-tertiary">Live</span>
+      <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-surface shadow-[var(--shadow-pressed)]">
+        <div class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></div>
+        <span class="text-[9px] font-bold uppercase tracking-[0.2em] text-text-tertiary">Live</span>
       </div>
     </header>
 
-    <div class="tab-content relative flex-1">
-      {#if activeTab === 'timer'}
-        <Timer />
-        <div class="mt-8">
+    <div class="flex-1 overflow-y-auto px-8 py-4 scrollbar-none">
+      <div class="tab-content pb-24 animate-in fade-in duration-700">
+        {#if activeTab === 'timer'}
+          <div class="space-y-12">
+            <Timer />
             <ThemePicker {preferences} onUpdate={handlePrefsUpdate} />
-        </div>
-      {:else if activeTab === 'tasks'}
-        <TodoList />
-      {:else if activeTab === 'stats'}
-        <StatsDashboard />
-      {/if}
+          </div>
+        {:else if activeTab === 'tasks'}
+          <TodoList />
+        {:else if activeTab === 'stats'}
+          <StatsDashboard />
+        {/if}
+      </div>
     </div>
 
     <TabBar {activeTab} onTabChange={handleTabChange} />

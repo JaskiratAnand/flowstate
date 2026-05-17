@@ -55,14 +55,4 @@ Since the project is in the initial planning phase, these are the intended comma
 4. **WXT Unified API:** Use the `browser` object (from WXT) instead of `chrome` to ensure cross-browser compatibility (Firefox/Edge).
 5. **Drift Correction:** For the timer, store `lastTickAt` timestamps and calculate elapsed time on each alarm fire to account for browser scheduling delays.
 
-## Development Status
-
-- [x] PRD and Project Plan defined (`docs/`).
-- [ ] Initial scaffolding with WXT.
-- [ ] Core logic modules (`lib/`).
-- [ ] Background service worker implementation.
-- [ ] Popup UI and component implementation.
-- [ ] Theming system.
-- [ ] Final validation and testing.
-
 Refer to `docs/PRD.md` and `docs/PLAN.md` for detailed requirements and implementation decisions.

@@ -1,46 +1,64 @@
 :root {
-  /* Core Foundation */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --text-tertiary: #9ca3af;
+  /* Organic Studio - Shared Foundation (Light Mode) */
+  --bg-primary: #F9F6F0;    /* Paper */
+  --bg-secondary: #F1EDE4;  /* Clay / Surface */
+  --text-primary: #2D2B2A;  /* Ink */
+  --text-secondary: #4B4847;
+  --text-tertiary: #8C8885; /* Graphite / Muted */
   
-  --accent: #3b82f6;
-  --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
+  --surface: #F1EDE4;
+  --surface-raised: #F9F6F0;
+  --border: rgba(45, 43, 42, 0.1);
+  --border-strong: rgba(45, 43, 42, 0.2);
   
-  --surface: #ffffff;
-  --surface-raised: #ffffff;
-  --border: #e5e7eb;
-  --border-strong: #d1d5db;
+  --shadow-ambient: 4px 6px 12px rgba(45, 43, 42, 0.08), -4px -4px 10px rgba(255, 255, 255, 0.7);
+  --shadow-pressed: inset 3px 3px 6px rgba(45, 43, 42, 0.1), inset -2px -2px 4px rgba(255, 255, 255, 0.6);
   
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
   --radius-full: 9999px;
+
+  /* Default Theme (Forest) */
+  --accent: #8A9A86;
+  --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
-[data-theme="ocean"] { --accent: #0ea5e9; }
-[data-theme="forest"] { --accent: #10b981; }
-[data-theme="sunset"] { --accent: #f59e0b; }
+[data-theme="forest"] {
+  --accent: #8A9A86;
+}
+
+[data-theme="ocean"] {
+  --accent: #7A90A4;
+}
+
+[data-theme="sunset"] {
+  --accent: #C17767;
+}
 
 [data-dark="true"] {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #141414;
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-  --text-tertiary: #4b5563;
+  /* Organic Studio - Shared Foundation (Dark Mode) */
+  --bg-primary: #1A1817;    /* Espresso */
+  --bg-secondary: #262322;  /* Matte Dark Wood / Surface */
+  --text-primary: #EAE6E1;  /* Soft Parchment */
+  --text-secondary: #B8B2AC;
+  --text-tertiary: #8A8580; /* Faded Bark / Muted */
   
-  --surface: #141414;
-  --surface-raised: #1f1f1f;
-  --border: #262626;
-  --border-strong: #404040;
+  --surface: #262322;
+  --surface-raised: #2D2A29;
+  --border: rgba(255, 255, 255, 0.05);
+  --border-strong: rgba(255, 255, 255, 0.1);
+  
+  --shadow-ambient: 4px 6px 12px rgba(0, 0, 0, 0.4), -2px -2px 8px rgba(255, 255, 255, 0.05);
+  --shadow-pressed: inset 4px 4px 8px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+
+  /* Dark Theme Accents */
+  &[data-theme="forest"] { --accent: #3A5A40; }
+  &[data-theme="ocean"] { --accent: #2B3A4A; }
+  &[data-theme="sunset"] { --accent: #D48C45; }
 }
 
 /* Base utility for dynamic accent softness */
 :root {
-  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
 }

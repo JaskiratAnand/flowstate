@@ -31,9 +31,11 @@ function focus(node: HTMLInputElement) {
 }
 </script>
 
-<div class="group flex items-start gap-3 p-4 bg-bg-primary border border-border rounded-2xl transition-all hover:border-accent hover:shadow-sm">
+<div class="group flex items-start gap-4 p-4.5 bg-surface shadow-[var(--shadow-ambient)] rounded-2xl transition-all hover:scale-[1.01]">
+  <!-- Tactile Checkbox -->
   <button
-    class="mt-0.5 w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center {task.completed ? 'bg-accent border-accent text-white' : 'border-border-strong bg-transparent'}"
+    class="mt-0.5 w-6 h-6 rounded-full transition-all flex items-center justify-center flex-shrink-0
+           {task.completed ? 'bg-accent text-white shadow-[var(--shadow-ambient)]' : 'bg-bg-primary shadow-[var(--shadow-pressed)]'}"
     on:click={() => onToggle(task.id)}
     aria-label={task.completed ? 'Mark incomplete' : 'Mark complete'}
   >
@@ -44,7 +46,7 @@ function focus(node: HTMLInputElement) {
     {/if}
   </button>
 
-  <div class="flex-1 min-w-0">
+  <div class="flex-1 min-w-0 pt-0.5">
     {#if isEditing}
       <input
         type="text"
@@ -52,12 +54,12 @@ function focus(node: HTMLInputElement) {
         on:blur={handleBlur}
         on:keydown={handleKeyDown}
         use:focus
-        class="w-full bg-transparent border-none p-0 focus:ring-0 text-sm font-medium"
+        class="w-full bg-transparent border-none p-0 focus:ring-0 text-[15px] font-semibold text-text-primary"
       />
     {:else}
-      <div class="flex flex-col gap-0.5">
+      <div class="flex flex-col gap-1">
         <span
-          class="text-sm font-medium leading-tight {task.completed ? 'line-through text-text-tertiary' : 'text-text-primary'}"
+          class="text-[15px] font-semibold leading-snug transition-all cursor-text {task.completed ? 'opacity-40 line-through' : 'text-text-primary'}"
           on:dblclick={() => (isEditing = true)}
           role="button"
           tabindex="0"
@@ -67,9 +69,8 @@ function focus(node: HTMLInputElement) {
           {task.text}
         </span>
         {#if task.category}
-          <div class="flex items-center gap-1.5 mt-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
-            <span class="text-[10px] font-bold uppercase tracking-wider text-text-tertiary">
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-bold uppercase tracking-[0.1em] text-accent/70">
               {task.category}
             </span>
           </div>
@@ -80,11 +81,11 @@ function focus(node: HTMLInputElement) {
 
   <button
     on:click={() => onDelete(task.id)}
-    class="opacity-0 group-hover:opacity-100 p-1 text-text-tertiary hover:text-red-500 transition-all active:scale-90"
+    class="opacity-0 group-hover:opacity-100 p-2 text-text-tertiary hover:text-accent transition-all active:scale-90"
     title="Delete task"
   >
-    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+    <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 6 6 18M6 6l12 12"/>
     </svg>
   </button>
 </div>

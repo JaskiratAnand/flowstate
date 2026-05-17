@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Organic Studio - Task Log</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,600&amp;family=Karla:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#8A9A86",
+          "background-light": "#F9F6F0",
+          "background-dark": "#1A1817",
+          "surface-light": "#F1EDE4",
+          "surface-dark": "#262322",
+          "text-light": "#2D2B2A",
+          "text-dark": "#EAE6E1",
+          "muted-light": "#8C8885",
+          "muted-dark": "#8A8580",
+          "accent-light": "#C17767",
+          "accent-dark": "#D48C45"
+        },
+        fontFamily: {
+          "display": ["Fraunces", "serif"],
+          "body": ["Karla", "sans-serif"]
+        },
+        borderRadius: {
+          "DEFAULT": "0.5rem",
+          "sm": "0.5rem",
+          "md": "1rem",
+          "lg": "1rem",
+          "xl": "1.5rem",
+          "full": "9999px"
+        },
+        boxShadow: {
+          'ambient': '4px 6px 12px rgba(45, 43, 42, 0.08), -4px -4px 10px rgba(255, 255, 255, 0.7)',
+          'pressed': 'inset 3px 3px 6px rgba(45, 43, 42, 0.1), inset -2px -2px 4px rgba(255, 255, 255, 0.6)'
+        }
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    background-color: theme('colors.background-light');
+    color: theme('colors.text-light');
+  }
+  .mask-edges {
+    mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+  }
+</style>
+</head>
+<body class="font-body antialiased min-h-screen flex items-center justify-center bg-gray-100">
+<div class="w-[320px] h-[480px] bg-background-light rounded-2xl shadow-ambient overflow-hidden flex flex-col relative border border-surface-light">
+<!-- Pinned Header -->
+<header class="px-6 py-5 flex items-end justify-between shrink-0 z-10 bg-background-light bg-opacity-90 backdrop-blur-sm">
+<h1 class="font-display font-semibold text-2xl text-text-light">Session Log</h1>
+<p class="font-body text-base text-muted-light">2h 15m</p>
+</header>
+<!-- Scrolling List -->
+<div class="flex-1 overflow-y-auto px-6 mask-edges pb-4 custom-scrollbar">
+<div class="flex flex-col gap-3">
+<!-- Session Item -->
+<div class="flex items-center justify-between h-12 bg-surface-light rounded-md px-4 shadow-pressed">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">potted_plant</span>
+<p class="font-body text-[15px] text-text-light">09:00 - 09:25</p>
+</div>
+<div class="h-6 px-3 bg-background-light rounded-full flex items-center justify-center shadow-ambient">
+<span class="font-body font-semibold text-xs text-primary uppercase tracking-[1.2px]">25m</span>
+</div>
+</div>
+<!-- Session Item -->
+<div class="flex items-center justify-between h-12 bg-surface-light rounded-md px-4 shadow-pressed">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">potted_plant</span>
+<p class="font-body text-[15px] text-text-light">09:30 - 09:55</p>
+</div>
+<div class="h-6 px-3 bg-background-light rounded-full flex items-center justify-center shadow-ambient">
+<span class="font-body font-semibold text-xs text-primary uppercase tracking-[1.2px]">25m</span>
+</div>
+</div>
+<!-- Session Item -->
+<div class="flex items-center justify-between h-12 bg-surface-light rounded-md px-4 shadow-pressed">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">potted_plant</span>
+<p class="font-body text-[15px] text-text-light">10:05 - 10:30</p>
+</div>
+<div class="h-6 px-3 bg-background-light rounded-full flex items-center justify-center shadow-ambient">
+<span class="font-body font-semibold text-xs text-primary uppercase tracking-[1.2px]">25m</span>
+</div>
+</div>
+<!-- Session Item -->
+<div class="flex items-center justify-between h-12 bg-surface-light rounded-md px-4 shadow-pressed">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">potted_plant</span>
+<p class="font-body text-[15px] text-text-light">10:35 - 11:00</p>
+</div>
+<div class="h-6 px-3 bg-background-light rounded-full flex items-center justify-center shadow-ambient">
+<span class="font-body font-semibold text-xs text-primary uppercase tracking-[1.2px]">25m</span>
+</div>
+</div>
+<!-- Session Item -->
+<div class="flex items-center justify-between h-12 bg-surface-light rounded-md px-4 shadow-pressed">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">potted_plant</span>
+<p class="font-body text-[15px] text-text-light">11:15 - 11:40</p>
+</div>
+<div class="h-6 px-3 bg-background-light rounded-full flex items-center justify-center shadow-ambient">
+<span class="font-body font-semibold text-xs text-primary uppercase tracking-[1.2px]">25m</span>
+</div>
+</div>
+<!-- Session Item -->
+<div class="flex items-center justify-between h-12 bg-surface-light rounded-md px-4 shadow-pressed">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">potted_plant</span>
+<p class="font-body text-[15px] text-text-light">11:45 - 12:10</p>
+</div>
+<div class="h-6 px-3 bg-background-light rounded-full flex items-center justify-center shadow-ambient">
+<span class="font-body font-semibold text-xs text-primary uppercase tracking-[1.2px]">25m</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty State (Hidden by default, shown here for structure reference if needed, but the requirements say to show the list) -->
+<!-- 
+    <div class="flex-1 flex flex-col items-center justify-center px-6 text-center z-0">
+      <span class="material-symbols-outlined text-4xl text-muted-light mb-4 opacity-50">grass</span>
+      <p class="font-body text-[15px] text-muted-light">No focus sessions yet today.<br>Plant a seed.</p>
+    </div>
+    -->
+<!-- Pinned Footer Nav (Using Shared Components BottomNav style but tailored to the design specs of discreet bottom icon navigation) -->
+<footer class="h-16 shrink-0 flex items-center justify-around px-6 z-10 bg-background-light bg-opacity-90 backdrop-blur-sm border-t border-surface-light">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-muted-light hover:text-text-light hover:shadow-pressed transition-all bg-background-light">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">timer</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-primary shadow-pressed bg-surface-light transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">list</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-muted-light hover:text-text-light hover:shadow-pressed transition-all bg-background-light">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+</button>
+</footer>
+</div>
+</body></html>

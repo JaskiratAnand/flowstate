@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Organic Studio Pomodoro - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#3ce619",
+          "background-light": "#f6f8f6",
+          "background-dark": "#142111",
+          
+          /* Custom variables mapped to Tailwind config for easier usage if needed, though PRD prefers CSS vars. Mapping theme colors to semantic roles based on PRD Light Theme */
+          "paper": "#F9F6F0",
+          "clay": "#F1EDE4",
+          "ink": "#2D2B2A",
+          "graphite": "#8C8885",
+        },
+        fontFamily: {
+          "display": ["Karla", "sans-serif"],
+          "body": ["Karla", "sans-serif"]
+        },
+        borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+        boxShadow: {
+          'ambient': '4px 6px 12px rgba(45, 43, 42, 0.08), -4px -4px 10px rgba(255, 255, 255, 0.7)',
+          'ambient-hover': '6px 8px 16px rgba(45, 43, 42, 0.12), -6px -6px 14px rgba(255, 255, 255, 0.8)',
+          'pressed': 'inset 3px 3px 6px rgba(45, 43, 42, 0.1), inset -2px -2px 4px rgba(255, 255, 255, 0.6)',
+        }
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    font-family: 'Karla', sans-serif;
+    background-color: #F9F6F0; /* paper */
+    color: #2D2B2A; /* ink */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  /* Fixed extension window size */
+  .extension-window {
+    width: 320px;
+    height: 480px;
+    background-color: #F9F6F0; /* paper */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* External shadow for demo purposes */
+  }
+
+  /* Custom Range Slider Styling */
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #F1EDE4; /* clay */
+    cursor: pointer;
+    margin-top: -7px; /* (track height / 2) - (thumb height / 2) */
+    box-shadow: 4px 6px 12px rgba(45, 43, 42, 0.08), -4px -4px 10px rgba(255, 255, 255, 0.7);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, width 0.1s ease, height 0.1s ease, margin-top 0.1s ease;
+  }
+
+  input[type=range]:active::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+    margin-top: -9px;
+    box-shadow: 6px 8px 16px rgba(45, 43, 42, 0.12), -6px -6px 14px rgba(255, 255, 255, 0.8);
+  }
+
+  input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: #E5E0D8; /* Slightly darker than clay for track */
+    border-radius: 9999px;
+    box-shadow: inset 3px 3px 6px rgba(45, 43, 42, 0.1), inset -2px -2px 4px rgba(255, 255, 255, 0.6);
+  }
+  
+  /* Focus state outline removal for cleaner look, relying on physical styling */
+  input[type=range]:focus {
+    outline: none;
+  }
+
+  /* Theme Toggle Switch */
+  .theme-toggle-container {
+    width: 60px;
+    height: 32px;
+    background: #F1EDE4; /* clay */
+    border-radius: 9999px;
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 3px 3px 6px rgba(45, 43, 42, 0.1), inset -2px -2px 4px rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+  }
+
+  .theme-toggle-thumb {
+    width: 24px;
+    height: 24px;
+    background: #F1EDE4;
+    border-radius: 50%;
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    box-shadow: 4px 6px 12px rgba(45, 43, 42, 0.08), -4px -4px 10px rgba(255, 255, 255, 0.7);
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    z-index: 10;
+  }
+
+  /* Etched icons inside toggle */
+  .toggle-icon {
+    font-size: 14px;
+    color: #8C8885; /* graphite */
+    z-index: 5;
+    /* Simulate deboss */
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.7), -1px -1px 0px rgba(0,0,0,0.1);
+  }
+
+</style>
+</head>
+<body class="antialiased font-body">
+<div class="extension-window">
+<!-- Minimal Header (Back-to-Main Exception for Settings) -->
+<header class="flex items-center justify-between px-6 py-5">
+<button aria-label="Go back" class="text-[#8C8885] hover:text-[#2D2B2A] transition-colors flex items-center justify-center w-8 h-8 rounded-full shadow-ambient active:shadow-pressed">
+<span class="material-symbols-outlined" style="font-size: 20px;">arrow_back</span>
+</button>
+<h1 class="text-xl font-semibold tracking-tight text-[#2D2B2A]">Settings</h1>
+<div class="w-8"></div> <!-- Spacer to balance header -->
+</header>
+<!-- Content Container -->
+<main class="flex-1 px-6 py-4 flex flex-col gap-8 overflow-y-auto">
+<!-- Focus Time Setting -->
+<section class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<label class="text-sm font-semibold text-[#2D2B2A]" for="focus-slider">Focus Time</label>
+<span class="text-sm font-medium text-[#8C8885]">25 min</span>
+</div>
+<div class="relative w-full pt-2 pb-2">
+<!-- Fake fill for the range track to show primary color -->
+<div class="absolute top-[11px] left-0 h-[6px] bg-primary rounded-l-full pointer-events-none" style="width: 50%;"></div>
+<input class="w-full relative z-10" id="focus-slider" max="60" min="5" type="range" value="25"/>
+</div>
+</section>
+<!-- Break Time Setting -->
+<section class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<label class="text-sm font-semibold text-[#2D2B2A]" for="break-slider">Break Time</label>
+<span class="text-sm font-medium text-[#8C8885]">5 min</span>
+</div>
+<div class="relative w-full pt-2 pb-2">
+<!-- Fake fill -->
+<div class="absolute top-[11px] left-0 h-[6px] bg-primary rounded-l-full pointer-events-none" style="width: 20%;"></div>
+<input class="w-full relative z-10" id="break-slider" max="15" min="1" type="range" value="5"/>
+</div>
+</section>
+<!-- Theme Toggle -->
+<section class="flex items-center justify-between mt-4 p-4 bg-[#F1EDE4] rounded-xl shadow-pressed">
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-[#2D2B2A]">Appearance</span>
+<span class="text-xs text-[#8C8885] mt-1">Light theme</span>
+</div>
+<div aria-checked="false" class="theme-toggle-container" role="switch" tabindex="0">
+<span class="material-symbols-outlined toggle-icon ml-0.5">light_mode</span>
+<span class="material-symbols-outlined toggle-icon mr-0.5">dark_mode</span>
+<div class="theme-toggle-thumb"></div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

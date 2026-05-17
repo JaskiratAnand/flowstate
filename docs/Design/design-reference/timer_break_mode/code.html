@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Organic Studio Pomodoro - Break Mode</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#3ce619",
+          "background-light": "#F9F6F0",
+          "background-dark": "#1A1817",
+          "surface-light": "#F1EDE4",
+          "surface-dark": "#262322",
+          "text-light": "#2D2B2A",
+          "text-dark": "#EAE6E1",
+          "muted-light": "#8C8885",
+          "muted-dark": "#8A8580",
+          "accent": "#C17767"
+        },
+        fontFamily: {
+          "display": ["Karla", "sans-serif"],
+          "body": ["Karla", "sans-serif"]
+        },
+        borderRadius: {
+          "DEFAULT": "0.5rem",
+          "lg": "1rem",
+          "xl": "1.5rem",
+          "full": "9999px"
+        },
+        boxShadow: {
+          'ambient-light': '4px 6px 12px rgba(45, 43, 42, 0.08), -4px -4px 10px rgba(255, 255, 255, 0.7)',
+          'pressed-light': 'inset 3px 3px 6px rgba(45, 43, 42, 0.1), inset -2px -2px 4px rgba(255, 255, 255, 0.6)',
+        }
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    font-family: 'Karla', sans-serif;
+  }
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Progress Ring Animation classes for visual reference, no actual JS execution */
+  .progress-ring__circle {
+    transition: stroke-dashoffset 1s linear;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+</style>
+</head>
+<body class="bg-background-light text-text-light flex items-center justify-center min-h-screen">
+<!-- Extension Container -->
+<div class="relative w-[320px] h-[480px] bg-background-light rounded-[24px] shadow-2xl overflow-hidden flex flex-col items-center justify-between py-6 select-none border border-white/50">
+<!-- Header -->
+<header class="w-full text-center">
+<h1 class="text-muted-light text-[12px] font-medium tracking-[1.2px] uppercase">Rest</h1>
+</header>
+<!-- Main Dial Area -->
+<div class="flex-1 flex flex-col items-center justify-center w-full relative space-y-8">
+<!-- Dial -->
+<button class="relative w-[220px] h-[220px] rounded-full bg-surface-light shadow-ambient-light flex items-center justify-center group active:shadow-pressed-light transition-shadow duration-200 cursor-pointer border-[0.5px] border-white/40 focus:outline-none">
+<!-- SVG Progress Ring -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" height="220" viewbox="0 0 220 220" width="220">
+<!-- Background Track -->
+<circle cx="110" cy="110" fill="transparent" r="106" stroke="rgba(140, 136, 133, 0.1)" stroke-width="4"></circle>
+<!-- Active Progress (Counter-Clockwise simulation) -->
+<circle class="progress-ring__circle" cx="110" cy="110" fill="transparent" r="106" stroke="#C17767" stroke-dasharray="666" stroke-dashoffset="150" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<!-- Timer Display -->
+<div class="text-[56px] font-light tabular-nums tracking-tight text-text-light group-active:opacity-80 transition-opacity duration-200">
+          05:00
+        </div>
+</button>
+<!-- Skip Button -->
+<button class="text-muted-light text-[12px] font-medium tracking-[1.2px] uppercase underline underline-offset-4 hover:text-text-light transition-colors duration-200 focus:outline-none rounded-lg px-4 py-2 hover:bg-surface-light/50">
+        Skip
+      </button>
+</div>
+<!-- Bottom Navigation -->
+<nav class="w-full px-8 pb-2 flex justify-between items-center">
+<button class="p-3 rounded-lg text-primary bg-surface-light shadow-pressed-light focus:outline-none transition-shadow duration-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">timer</span>
+</button>
+<button class="p-3 rounded-lg text-muted-light hover:text-text-light hover:bg-surface-light hover:shadow-ambient-light focus:outline-none transition-all duration-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">receipt_long</span>
+</button>
+<button class="p-3 rounded-lg text-muted-light hover:text-text-light hover:bg-surface-light hover:shadow-ambient-light focus:outline-none transition-all duration-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">tune</span>
+</button>
+</nav>
+</div>
+</body></html>
