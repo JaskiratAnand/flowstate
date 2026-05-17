@@ -1,117 +1,61 @@
-import { browser } from 'wxt/browser';
-import { getStorageItem, setStorageItem } from './storage';
-import { startTimer, pauseTimer, tickTimer, resetTimer } from './timer';
+import { getStorageItem, setStorageItem, STORAGE_KEYS } from './storage';
 import { archiveCompletedTasks, carryOverIncompleteTasks } from './archive';
 import { incrementPomodoro } from './stats';
-import type { ActionMessage, TimerState } from './types';
+import type { ActionMessage } from './types';
+import { TimerEngineImpl } from './timer-engine';
+import {
+  WxtStorageAdapter,
+  WxtAlarmAdapter,
+  WxtFeedbackAdapter,
+} from './wxt-adapters';
+
+const engine = new TimerEngineImpl(
+  new WxtStorageAdapter(),
+  new WxtAlarmAdapter(),
+  new WxtFeedbackAdapter(),
+);
 
 export async function handleMessage(message: ActionMessage) {
-  const state = await getStorageItem('TIMER_STATE');
-  const config = await getStorageItem('TIMER_CONFIG');
-
-  if (!state || !config) return;
-
-  let nextState: TimerState = state;
-
   switch (message.type) {
     case 'START_TIMER':
-      nextState = startTimer(state, config);
-      await browser.alarms.create('pomodoro-tick', { periodInMinutes: 1 / 60 });
+      await engine.execute('START');
       break;
     case 'PAUSE_TIMER':
-      nextState = pauseTimer(state);
-      await browser.alarms.clear('pomodoro-tick');
+      await engine.execute('PAUSE');
       break;
     case 'RESET_TIMER':
-      nextState = resetTimer(state, config);
-      await browser.alarms.clear('pomodoro-tick');
+      await engine.execute('RESET');
       break;
     case 'SKIP_SESSION':
-      // Force end current session
-      const endState = { ...state, remainingSeconds: 0 };
-      nextState = tickTimer(endState, config);
-      await browser.alarms.clear('pomodoro-tick');
+      await engine.execute('SKIP');
       break;
   }
-
-  await setStorageItem('TIMER_STATE', nextState);
 }
 
-async function playSound() {
-  const OFFSCREEN_PATH = '/offscreen.html';
-
-  try {
-    // @ts-ignore
-    const contexts = (await (browser.runtime as any).getContexts({
-      contextTypes: ['OFFSCREEN_DOCUMENT'],
-    })) as any[];
-
-    if (contexts.length === 0) {
-      await (browser as any).offscreen.createDocument({
-        url: browser.runtime.getURL(OFFSCREEN_PATH),
-        reasons: ['AUDIO_PLAYBACK'],
-        justification: 'Play notification sound when timer ends',
-      });
-    }
-  } catch {
-    // Fallback if getContexts is not supported or document creation fails
-    try {
-      await (browser as any).offscreen.createDocument({
-        url: browser.runtime.getURL(OFFSCREEN_PATH),
-        reasons: ['AUDIO_PLAYBACK'],
-        justification: 'Play notification sound when timer ends',
-      });
-    } catch {
-      // Ignore if already exists
-    }
+export async function handleStorageChange(changes: Record<string, any>) {
+  if (changes[STORAGE_KEYS.TIMER_CONFIG]) {
+    await engine.syncWithConfig();
   }
-
-  // Trigger the programmatic chime
-  await browser.runtime.sendMessage({
-    type: 'PLAY_SOUND',
-  });
 }
 
 export async function handleAlarm(alarm: { name: string }) {
   if (alarm.name === 'pomodoro-tick') {
-    const state = await getStorageItem('TIMER_STATE');
-    const config = await getStorageItem('TIMER_CONFIG');
+    const stateBefore = await getStorageItem('TIMER_STATE');
+    await engine.tick();
 
-    if (!state || !config || state.status !== 'running') return;
-
-    const nextState = tickTimer(state, config);
-
-    if (state.remainingSeconds === 0) {
-      // Session finished
-      await browser.alarms.clear('pomodoro-tick');
-
-      // Play sound
-      playSound().catch((err) => console.error('Audio playback failed:', err));
-
-      if (state.sessionType === 'work') {
-        const stats = await getStorageItem('STATS');
-        if (stats) {
-          const date = new Date().toISOString().split('T')[0];
-          const nextStats = incrementPomodoro(stats, date);
-          await setStorageItem('STATS', nextStats);
-        }
+    // Handle stats on work session completion
+    if (
+      stateBefore?.status === 'running' &&
+      stateBefore.remainingSeconds === 0 &&
+      stateBefore.sessionType === 'work'
+    ) {
+      const stats = await getStorageItem('STATS');
+      if (stats) {
+        const date = new Date().toISOString().split('T')[0];
+        const nextStats = incrementPomodoro(stats, date);
+        await setStorageItem('STATS', nextStats);
       }
-
-      await browser.notifications.create({
-        type: 'basic',
-        iconUrl: '/icon/128.png',
-        title:
-          state.sessionType === 'work'
-            ? 'Work Session Complete!'
-            : 'Break Over!',
-        message:
-          state.sessionType === 'work'
-            ? 'Time for a break.'
-            : 'Time to get back to work.',
-      });
     }
-
-    await setStorageItem('TIMER_STATE', nextState);
   } else if (alarm.name === 'midnight-archive') {
     await handleMidnightArchive();
   }

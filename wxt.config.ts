@@ -15,7 +15,11 @@ export default defineConfig({
       default_icon: 'icon.svg',
     },
     icons: {
-      '128': 'icon/128.png',
+      '16': 'icon.svg',
+      '32': 'icon.svg',
+      '48': 'icon.svg',
+      '96': 'icon.svg',
+      '128': 'icon.svg',
     },
   },
 });

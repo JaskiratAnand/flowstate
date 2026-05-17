@@ -1,0 +1,71 @@
+import { browser } from 'wxt/browser';
+import type { StoragePort, AlarmPort, FeedbackPort } from './timer-engine';
+import { getStorageItem, setStorageItem } from './storage';
+import type { TimerState, TimerConfig } from './types';
+
+export class WxtStorageAdapter implements StoragePort {
+  async getState(): Promise<TimerState> {
+    return (await getStorageItem('TIMER_STATE'))!;
+  }
+  async setState(state: TimerState): Promise<void> {
+    await setStorageItem('TIMER_STATE', state);
+  }
+  async getConfig(): Promise<TimerConfig> {
+    return (await getStorageItem('TIMER_CONFIG'))!;
+  }
+}
+
+export class WxtAlarmAdapter implements AlarmPort {
+  private readonly ALARM_NAME = 'pomodoro-tick';
+
+  async scheduleTick(): Promise<void> {
+    await browser.alarms.create(this.ALARM_NAME, { periodInMinutes: 1 / 60 });
+  }
+  async clearTick(): Promise<void> {
+    await browser.alarms.clear(this.ALARM_NAME);
+  }
+}
+
+export class WxtFeedbackAdapter implements FeedbackPort {
+  async notify(title: string, message: string): Promise<void> {
+    await browser.notifications.create({
+      type: 'basic',
+      iconUrl: '/icon/128.png',
+      title,
+      message,
+    });
+  }
+
+  async playChime(): Promise<void> {
+    const OFFSCREEN_PATH = '/offscreen.html';
+
+    try {
+      // @ts-ignore
+      const contexts = (await (browser.runtime as any).getContexts({
+        contextTypes: ['OFFSCREEN_DOCUMENT'],
+      })) as any[];
+
+      if (contexts.length === 0) {
+        await (browser as any).offscreen.createDocument({
+          url: browser.runtime.getURL(OFFSCREEN_PATH),
+          reasons: ['AUDIO_PLAYBACK'],
+          justification: 'Play notification sound when timer ends',
+        });
+      }
+    } catch {
+      try {
+        await (browser as any).offscreen.createDocument({
+          url: browser.runtime.getURL(OFFSCREEN_PATH),
+          reasons: ['AUDIO_PLAYBACK'],
+          justification: 'Play notification sound when timer ends',
+        });
+      } catch {
+        // Ignore if already exists
+      }
+    }
+
+    await browser.runtime.sendMessage({
+      type: 'PLAY_SOUND',
+    });
+  }
+}

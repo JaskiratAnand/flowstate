@@ -1,4 +1,8 @@
-import { handleMessage, handleAlarm } from '../lib/background-logic';
+import {
+  handleMessage,
+  handleAlarm,
+  handleStorageChange,
+} from '../lib/background-logic';
 import { getStorageItem, setStorageItem } from '../lib/storage';
 
 export default defineBackground(() => {
@@ -61,5 +65,9 @@ export default defineBackground(() => {
 
   browser.alarms.onAlarm.addListener((alarm) => {
     handleAlarm(alarm);
+  });
+
+  browser.storage.local.onChanged.addListener((changes) => {
+    handleStorageChange(changes);
   });
 });

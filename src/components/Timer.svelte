@@ -2,20 +2,15 @@
 import { onMount, onDestroy } from 'svelte';
 import { browser } from 'wxt/browser';
 import { getStorageItem, STORAGE_KEYS } from '../lib/storage';
-import type { TimerState, TimerConfig } from '../lib/types';
+import { useTimer } from '../lib/timer-store';
+import type { TimerConfig } from '../lib/types';
 import TimerConfigComp from './TimerConfig.svelte';
 
-let state: TimerState | null = null;
+const timer = useTimer();
 let config: TimerConfig | null = null;
 let showConfig = false;
 
 onMount(async () => {
-  state = (await getStorageItem('TIMER_STATE')) || {
-    status: 'idle',
-    remainingSeconds: 25 * 60,
-    sessionType: 'work',
-    completedSessions: 0,
-  };
   config = (await getStorageItem('TIMER_CONFIG')) || {
     workDuration: 25,
     shortBreakDuration: 5,
@@ -32,9 +27,6 @@ onDestroy(() => {
 function handleStorageChange(changes: Record<string, any>, areaName: string) {
   if (areaName !== 'local') return;
 
-  if (changes[STORAGE_KEYS.TIMER_STATE]) {
-    state = changes[STORAGE_KEYS.TIMER_STATE].newValue;
-  }
   if (changes[STORAGE_KEYS.TIMER_CONFIG]) {
     config = changes[STORAGE_KEYS.TIMER_CONFIG].newValue;
   }
@@ -46,9 +38,7 @@ function formatTime(seconds: number): string {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
-function sendMessage(type: string) {
-  browser.runtime.sendMessage({ type });
-}
+$: state = $timer;
 
 $: label =
   state?.sessionType === 'work'
@@ -65,15 +55,17 @@ $: totalSeconds = config
         : config.longBreakDuration) * 60
   : 25 * 60;
 
-$: progress = state ? 1 - state.remainingSeconds / totalSeconds : 0;
+$: progress = state
+  ? Math.max(0, Math.min(1, 1 - state.remainingSeconds / totalSeconds))
+  : 0;
 $: dashArray = 2 * Math.PI * 106; // radius = 106
 $: dashOffset = dashArray * (1 - progress);
 
 function handleDialClick() {
   if (state?.status === 'running') {
-    sendMessage('PAUSE_TIMER');
+    timer.pause();
   } else {
-    sendMessage('START_TIMER');
+    timer.start();
   }
 }
 </script>
@@ -138,7 +130,7 @@ function handleDialClick() {
   <div class="flex items-center gap-8 mb-10">
     <button
       class="p-4 rounded-full bg-surface shadow-[var(--shadow-ambient)] text-text-tertiary hover:text-text-primary transition-all active:shadow-[var(--shadow-pressed)] active:scale-95"
-      on:click={() => sendMessage('RESET_TIMER')}
+      on:click={() => timer.reset()}
       title="Reset"
     >
       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -166,7 +158,7 @@ function handleDialClick() {
 
     <button
       class="p-4 rounded-full bg-surface shadow-[var(--shadow-ambient)] text-text-tertiary hover:text-text-primary transition-all active:shadow-[var(--shadow-pressed)] active:scale-95"
-      on:click={() => sendMessage('SKIP_SESSION')}
+      on:click={() => timer.skip()}
       title="Skip"
     >
       <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
