@@ -1,5 +1,5 @@
 <script lang="ts">
-import { onMount } from 'svelte';
+import { onMount, onDestroy } from 'svelte';
 import { flip } from 'svelte/animate';
 import { dndzone } from 'svelte-dnd-action';
 import { nanoid } from 'nanoid';
@@ -15,6 +15,11 @@ let newTaskCategory = 'Work';
 let newTaskPriority: PriorityLevel = 'none';
 let moveHighPriorityToTop = true;
 let lastValidItems: Task[] = [];
+let pendingSortTaskIds = new Set<string>();
+
+onDestroy(() => {
+  finalizePendingSorts();
+});
 
 onMount(async () => {
   const [stored, prefs] = await Promise.all([
@@ -35,6 +40,7 @@ async function sync() {
 }
 
 async function addTask() {
+  finalizePendingSorts();
   if (!newTaskText.trim()) return;
 
   const newTask: Task = {
@@ -56,6 +62,7 @@ async function addTask() {
 }
 
 async function toggleTask(id: string) {
+  finalizePendingSorts();
   let completedNow = false;
   items = items.map((t) => {
     if (t.id === id) {
@@ -92,12 +99,14 @@ async function toggleTask(id: string) {
 }
 
 async function deleteTask(id: string) {
+  finalizePendingSorts();
   items = items.filter((t) => t.id !== id);
   lastValidItems = [...items];
   await sync();
 }
 
 async function editTask(id: string, text: string) {
+  finalizePendingSorts();
   items = items.map((t) => (t.id === id ? { ...t, text } : t));
   lastValidItems = [...items];
   await sync();
@@ -105,9 +114,34 @@ async function editTask(id: string, text: string) {
 
 async function changePriority(id: string, priority: PriorityLevel) {
   items = items.map((t) => (t.id === id ? { ...t, priority } : t));
-  items = sortTasks(items, moveHighPriorityToTop);
-  lastValidItems = [...items];
+  pendingSortTaskIds.add(id);
   await sync();
+}
+
+function finalizePendingSorts() {
+  if (pendingSortTaskIds.size > 0) {
+    items = sortTasks(items, moveHighPriorityToTop);
+    lastValidItems = [...items];
+    sync();
+    pendingSortTaskIds.clear();
+  }
+}
+
+function handleMouseLeave(id: string) {
+  if (pendingSortTaskIds.has(id)) {
+    finalizePendingSorts();
+  }
+}
+
+function handleFocusOut(e: FocusEvent, id: string) {
+  const currentTarget = e.currentTarget as HTMLElement;
+  setTimeout(() => {
+    if (!currentTarget.contains(document.activeElement)) {
+      if (pendingSortTaskIds.has(id)) {
+        finalizePendingSorts();
+      }
+    }
+  }, 0);
 }
 
 function isValidOrder(
@@ -213,11 +247,15 @@ const flipDurationMs = 600;
         use:dndzone={{ items, flipDurationMs }}
         on:consider={handleDndConsider}
         on:finalize={handleDndFinalize}
+        role="list"
     >
         {#each items as item (item.id)}
             <div
                 class="outline-none"
                 animate:flip={{ duration: flipDurationMs }}
+                on:mouseleave={() => handleMouseLeave(item.id)}
+                on:focusout={(e) => handleFocusOut(e, item.id)}
+                role="listitem"
             >
                 <TodoItem
                     task={item}
