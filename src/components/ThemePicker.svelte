@@ -61,7 +61,7 @@ function handleCustomColorChange(e: Event) {
 >
     <div class="space-y-4">
         <span
-            class="text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1"
+            class="block text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1 mb-2"
             >Appearance</span
         >
         <div
@@ -84,7 +84,7 @@ function handleCustomColorChange(e: Event) {
 
     <div class="space-y-4">
         <span
-            class="text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1"
+            class="block text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1 mb-2"
             >Accent Color</span
         >
         <div class="flex flex-wrap gap-4">
@@ -158,7 +158,7 @@ function handleCustomColorChange(e: Event) {
 
     <div class="space-y-4">
         <span
-            class="text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1"
+            class="block text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1 mb-2"
             >Typography</span
         >
         <div
@@ -190,7 +190,7 @@ function handleCustomColorChange(e: Event) {
 
     <div class="space-y-4">
         <span
-            class="text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1"
+            class="block text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1 mb-2"
             >Task Settings</span
         >
         <div
