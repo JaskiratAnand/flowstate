@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Updated extension manifest name to "FlowState - Pomodoro Timer & Todo List".
+
 ## [0.1.1] - 2026-05-17
 
 ### Fixed

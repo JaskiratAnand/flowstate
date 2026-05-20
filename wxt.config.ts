@@ -9,7 +9,7 @@ export default defineConfig({
     plugins: [tailwind()],
   }),
   manifest: ({ browser }) => ({
-    name: 'FlowState',
+    name: 'FlowState - Pomodoro Timer & Todo List',
     permissions: [
       'storage',
       'alarms',
