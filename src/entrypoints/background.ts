@@ -62,8 +62,12 @@ export default defineBackground(() => {
     });
   });
 
-  browser.runtime.onMessage.addListener((message) => {
-    handleMessage(message);
+  browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    handleMessage(message)
+      .then(() => {
+        sendResponse();
+      })
+      .catch(console.error);
     return true; // Keep channel open if needed
   });
 
