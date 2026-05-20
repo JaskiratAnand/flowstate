@@ -22,20 +22,40 @@ function handleSystemThemeChange(e: MediaQueryListEvent | MediaQueryList) {
 
 onMount(async () => {
   let prefs = await getStorageItem('USER_PREFERENCES');
+  let updated = false;
   if (!prefs) {
     prefs = {
       theme: 'forest',
       colorScheme: 'system',
       fontFamily: 'karla',
       lastActiveTab: 'timer',
+      moveHighPriorityToTop: true,
     };
+    updated = true;
   }
   // migration for existing users
-  if (!prefs.fontFamily) prefs.fontFamily = 'karla';
+  if (!prefs.fontFamily) {
+    prefs.fontFamily = 'karla';
+    updated = true;
+  }
+  if (prefs.moveHighPriorityToTop === undefined) {
+    prefs.moveHighPriorityToTop = true;
+    updated = true;
+  }
 
   // Lock pro features if active
-  if (prefs.theme === 'custom') prefs.theme = 'forest';
-  if (prefs.fontFamily !== 'karla') prefs.fontFamily = 'karla';
+  if (prefs.theme === 'custom') {
+    prefs.theme = 'forest';
+    updated = true;
+  }
+  if (prefs.fontFamily !== 'karla') {
+    prefs.fontFamily = 'karla';
+    updated = true;
+  }
+
+  if (updated) {
+    await setStorageItem('USER_PREFERENCES', prefs);
+  }
 
   preferences = prefs;
   activeTab = prefs.lastActiveTab;

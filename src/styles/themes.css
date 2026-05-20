@@ -27,6 +27,11 @@
   /* Default Theme (Forest) */
   --accent: var(--color-forest);
   --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
+
+  /* Priority Colors */
+  --color-red: hsl(5, 75%, 62%);
+  --color-yellow: hsl(42, 85%, 55%);
+  --color-green: hsl(115, 55%, 48%);
 }
 
 [data-theme="forest"] {
@@ -61,6 +66,11 @@
   --color-forest: #A3B18A;
   --color-ocean: #93A8AC;
   --color-sunset: #C17767;
+
+  /* Dark Theme Priority Colors */
+  --color-red: hsl(5, 80%, 65%);
+  --color-yellow: hsl(42, 85%, 65%);
+  --color-green: hsl(115, 60%, 58%);
 }
 
 /* Base utility for dynamic accent softness */

@@ -45,7 +45,11 @@ export default defineBackground(() => {
         colorScheme: 'system',
         fontFamily: 'karla',
         lastActiveTab: 'timer',
+        moveHighPriorityToTop: true,
       });
+    } else if (existingPrefs.moveHighPriorityToTop === undefined) {
+      existingPrefs.moveHighPriorityToTop = true;
+      await setStorageItem('USER_PREFERENCES', existingPrefs);
     }
 
     // Schedule midnight archive alarm

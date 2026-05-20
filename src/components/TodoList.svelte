@@ -5,15 +5,29 @@ import { dndzone } from 'svelte-dnd-action';
 import { nanoid } from 'nanoid';
 import { getStorageItem, setStorageItem } from '../lib/storage';
 import { incrementTasksCompleted } from '../lib/stats';
-import type { Task } from '../lib/types';
+import type { Task, PriorityLevel } from '../lib/types';
+import { sortTasks } from '../lib/tasks';
 import TodoItem from './TodoItem.svelte';
 
 let items: Task[] = [];
 let newTaskText = '';
 let newTaskCategory = 'Work';
+let newTaskPriority: PriorityLevel = 'none';
+let moveHighPriorityToTop = true;
+let lastValidItems: Task[] = [];
 
 onMount(async () => {
-  items = (await getStorageItem('TASKS')) || [];
+  const [stored, prefs] = await Promise.all([
+    getStorageItem('TASKS'),
+    getStorageItem('USER_PREFERENCES'),
+  ]);
+
+  if (prefs && prefs.moveHighPriorityToTop !== undefined) {
+    moveHighPriorityToTop = prefs.moveHighPriorityToTop;
+  }
+
+  items = sortTasks(stored || [], moveHighPriorityToTop);
+  lastValidItems = [...items];
 });
 
 async function sync() {
@@ -28,12 +42,16 @@ async function addTask() {
     text: newTaskText,
     completed: false,
     category: newTaskCategory,
+    priority: newTaskPriority,
     order: items.length,
     createdAt: Date.now(),
   };
 
   items = [newTask, ...items];
+  items = sortTasks(items, moveHighPriorityToTop);
+  lastValidItems = [...items];
   newTaskText = '';
+  newTaskPriority = 'none';
   await sync();
 }
 
@@ -61,31 +79,83 @@ async function toggleTask(id: string) {
       if (taskIndex > -1) {
         const [task] = items.splice(taskIndex, 1);
         items = [...items, task];
+        items = sortTasks(items, moveHighPriorityToTop);
+        lastValidItems = [...items];
         await sync();
       }
     }, 300);
   } else {
+    items = sortTasks(items, moveHighPriorityToTop);
+    lastValidItems = [...items];
     await sync();
   }
 }
 
 async function deleteTask(id: string) {
   items = items.filter((t) => t.id !== id);
+  lastValidItems = [...items];
   await sync();
 }
 
 async function editTask(id: string, text: string) {
   items = items.map((t) => (t.id === id ? { ...t, text } : t));
+  lastValidItems = [...items];
   await sync();
 }
 
+async function changePriority(id: string, priority: PriorityLevel) {
+  items = items.map((t) => (t.id === id ? { ...t, priority } : t));
+  items = sortTasks(items, moveHighPriorityToTop);
+  lastValidItems = [...items];
+  await sync();
+}
+
+function isValidOrder(
+  proposedItems: Task[],
+  moveHighPriorityToTop: boolean,
+): boolean {
+  let seenCompleted = false;
+  let seenNonHighUncompleted = false;
+
+  for (const item of proposedItems) {
+    if (item.completed) {
+      seenCompleted = true;
+    } else {
+      if (seenCompleted) {
+        return false;
+      }
+      if (moveHighPriorityToTop) {
+        if (item.priority === 'high') {
+          if (seenNonHighUncompleted) {
+            return false;
+          }
+        } else {
+          seenNonHighUncompleted = true;
+        }
+      }
+    }
+  }
+  return true;
+}
+
 function handleDndConsider(e: CustomEvent<{ items: Task[] }>) {
-  items = e.detail.items;
+  const proposed = e.detail.items;
+  if (!isValidOrder(proposed, moveHighPriorityToTop)) {
+    items = [...lastValidItems];
+  } else {
+    items = proposed;
+  }
 }
 
 function handleDndFinalize(e: CustomEvent<{ items: Task[] }>) {
-  items = e.detail.items;
-  sync();
+  const proposed = e.detail.items;
+  if (!isValidOrder(proposed, moveHighPriorityToTop)) {
+    items = [...lastValidItems];
+  } else {
+    items = proposed;
+    lastValidItems = [...items];
+    sync();
+  }
 }
 
 const flipDurationMs = 600;
@@ -126,7 +196,7 @@ const flipDurationMs = 600;
             {#each ["Work", "Personal", "Study"] as cat}
                 <button
                     class="text-[10px] font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-full transition-all
-                 {newTaskCategory === cat
+                  {newTaskCategory === cat
                         ? 'bg-accent text-white shadow-(--shadow-ambient)'
                         : 'bg-surface shadow-(--shadow-ambient) text-text-tertiary hover:text-text-secondary'}"
                     on:click={() => (newTaskCategory = cat)}
@@ -154,6 +224,7 @@ const flipDurationMs = 600;
                     onToggle={toggleTask}
                     onDelete={deleteTask}
                     onEdit={editTask}
+                    onPriorityChange={changePriority}
                 />
             </div>
         {:else}
@@ -180,3 +251,5 @@ const flipDurationMs = 600;
         {/each}
     </div>
 </div>
+
+

@@ -187,4 +187,35 @@ function handleCustomColorChange(e: Event) {
             {/each}
         </div>
     </div>
+
+    <div class="space-y-4">
+        <span
+            class="text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1"
+            >Task Settings</span
+        >
+        <div
+            class="flex items-center justify-between p-4 bg-bg-primary rounded-2xl shadow-(--shadow-pressed)"
+        >
+            <div class="flex flex-col gap-0.5">
+                <span class="text-xs font-semibold text-text-primary">Move High Priority to Top</span>
+                <span class="text-[10px] text-text-tertiary">Automatically group urgent tasks at the top</span>
+            </div>
+            <button
+                type="button"
+                class="w-12 h-6 rounded-full p-1 transition-all duration-300 relative flex items-center focus:outline-none
+                       {preferences.moveHighPriorityToTop
+                         ? 'bg-accent/20 border border-accent/20'
+                         : 'bg-bg-secondary border border-border'}"
+                on:click={() => updatePrefs({ moveHighPriorityToTop: !preferences.moveHighPriorityToTop })}
+                aria-label="Toggle Move High Priority to Top"
+            >
+                <div
+                    class="w-4 h-4 rounded-full transition-all duration-300 shadow-(--shadow-ambient)
+                           {preferences.moveHighPriorityToTop
+                             ? 'bg-accent translate-x-5.5'
+                             : 'bg-text-tertiary translate-x-0'}"
+                ></div>
+            </button>
+        </div>
+    </div>
 </div>

@@ -14,6 +14,8 @@ export interface TimerConfig {
   longBreakDuration: number;
 }
 
+export type PriorityLevel = 'high' | 'medium' | 'low' | 'none';
+
 export interface Task {
   id: string;
   text: string;
@@ -21,6 +23,7 @@ export interface Task {
   category: string;
   order: number;
   createdAt: number;
+  priority?: PriorityLevel;
 }
 
 export interface DailyArchive {
@@ -46,6 +49,7 @@ export interface UserPreferences {
   colorScheme: ColorScheme;
   fontFamily: FontFamily;
   lastActiveTab: TabType;
+  moveHighPriorityToTop?: boolean;
 }
 
 export type MessageType =

@@ -27,3 +27,5 @@ web-ext.config.ts
 *.njsproj
 *.sln
 *.sw?
+
+.antigravitycli
