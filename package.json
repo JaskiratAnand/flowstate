@@ -2,7 +2,7 @@
   "name": "flow-state",
   "description": "A tactile, sensory-focused Pomodoro & Todo browser extension that grounds digital work in analog warmth.",
   "private": true,
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "scripts": {
     "dev": "wxt",
