@@ -16,13 +16,26 @@ export class WxtStorageAdapter implements StoragePort {
 }
 
 export class WxtAlarmAdapter implements AlarmPort {
-  private readonly ALARM_NAME = 'pomodoro-tick';
+  private intervalId: ReturnType<typeof setInterval> | null = null;
+
+  constructor(private onTick?: () => void) {}
 
   async scheduleTick(): Promise<void> {
-    await browser.alarms.create(this.ALARM_NAME, { periodInMinutes: 1 / 60 });
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+    this.intervalId = setInterval(() => {
+      if (this.onTick) {
+        this.onTick();
+      }
+    }, 1000);
   }
+
   async clearTick(): Promise<void> {
-    await browser.alarms.clear(this.ALARM_NAME);
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
   }
 }
 

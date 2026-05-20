@@ -11,7 +11,7 @@ import {
 
 const engine = new TimerEngineImpl(
   new WxtStorageAdapter(),
-  new WxtAlarmAdapter(),
+  new WxtAlarmAdapter(() => handleAlarm({ name: 'pomodoro-tick' })),
   new WxtFeedbackAdapter(),
 );
 

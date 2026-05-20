@@ -56,9 +56,6 @@ describe('Background Logic', () => {
         }),
       }),
     );
-    expect(browser.alarms.create).toHaveBeenCalledWith('pomodoro-tick', {
-      periodInMinutes: 1 / 60,
-    });
   });
 
   it('handles PAUSE_TIMER by updating state to paused and clearing the alarm', async () => {
@@ -91,7 +88,6 @@ describe('Background Logic', () => {
         }),
       }),
     );
-    expect(browser.alarms.clear).toHaveBeenCalledWith('pomodoro-tick');
   });
 
   it('handles pomodoro-tick alarm by decrementing time', async () => {
