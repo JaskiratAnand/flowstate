@@ -83,7 +83,7 @@ function handleDialClick() {
     <!-- Main Dial Area -->
     <main class="flex flex-col items-center justify-center relative">
         <button
-            class="relative w-[220px] h-[220px] rounded-full bg-surface flex items-center justify-center transition-all duration-300 group select-none active:scale-[0.98]
+            class="relative w-55 h-55 rounded-full bg-surface flex items-center justify-center transition-all duration-300 group select-none active:scale-[0.98]
              {state?.status === 'running'
                 ? 'shadow-(--shadow-ambient)'
                 : 'shadow-(--shadow-pressed)'}"

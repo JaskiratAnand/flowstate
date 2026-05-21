@@ -23,17 +23,31 @@ const tabs: { id: TabType; label: string; icon: string }[] = [
 ];
 </script>
 
-<nav class="fixed bottom-0 w-full px-8 pb-5 pt-12 flex justify-between items-end bg-gradient-to-t from-bg-primary via-bg-primary/90 to-transparent pointer-events-none">
-  {#each tabs as tab}
-    <button
-      class="w-14 h-14 flex items-center justify-center rounded-full transition-all pointer-events-auto
-             {activeTab === tab.id ? 'bg-surface text-accent shadow-[var(--shadow-ambient)]' : 'text-text-tertiary hover:text-text-primary hover:bg-surface/50'}"
-      on:click={() => onTabChange(tab.id)}
-      aria-label={tab.label}
-    >
-      <svg class="w-6 h-6 transition-transform {activeTab === tab.id ? 'scale-110' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d={tab.icon}/>
-      </svg>
-    </button>
-  {/each}
+<nav
+    class="fixed bottom-0 w-full px-8 pb-5 pt-12 flex justify-between items-end bg-linear-to-t from-bg-primary via-bg-primary/90 to-transparent pointer-events-none"
+>
+    {#each tabs as tab}
+        <button
+            class="w-14 h-14 flex items-center justify-center rounded-full transition-all pointer-events-auto
+             {activeTab === tab.id
+                ? 'bg-surface text-accent shadow-(--shadow-ambient)'
+                : 'text-text-tertiary hover:text-text-primary hover:bg-surface/50'}"
+            on:click={() => onTabChange(tab.id)}
+            aria-label={tab.label}
+        >
+            <svg
+                class="w-6 h-6 transition-transform {activeTab === tab.id
+                    ? 'scale-110'
+                    : ''}"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d={tab.icon} />
+            </svg>
+        </button>
+    {/each}
 </nav>

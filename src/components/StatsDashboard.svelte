@@ -54,22 +54,42 @@ const cards = [
 </script>
 
 <div class="grid grid-cols-2 gap-5 pb-10">
-  {#each cards as card}
-    <div class="p-6 bg-surface shadow-[var(--shadow-ambient)] rounded-[28px] flex flex-col gap-5 transition-all hover:scale-[1.02]">
-      <div class="w-11 h-11 rounded-2xl bg-bg-primary shadow-[var(--shadow-pressed)] flex items-center justify-center {card.color}">
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d={card.icon}/>
-        </svg>
-      </div>
-      <div class="flex flex-col">
-        <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-text-tertiary mb-2">{card.label}</span>
-        <div class="flex items-baseline gap-1.5">
-          <span class="text-4xl font-light tracking-tight text-text-primary tabular-nums">
-            {stats ? (stats as any)[card.key] || 0 : 0}
-          </span>
-          <span class="text-[10px] font-bold uppercase text-text-tertiary tracking-wider opacity-60">{card.unit}</span>
+    {#each cards as card}
+        <div
+            class="p-6 bg-surface shadow-(--shadow-ambient) rounded-[28px] flex flex-col gap-5 transition-all hover:scale-[1.02]"
+        >
+            <div
+                class="w-11 h-11 rounded-2xl bg-bg-primary shadow-(--shadow-pressed) flex items-center justify-center {card.color}"
+            >
+                <svg
+                    class="w-6 h-6"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d={card.icon} />
+                </svg>
+            </div>
+            <div class="flex flex-col">
+                <span
+                    class="text-[10px] font-bold uppercase tracking-[0.15em] text-text-tertiary mb-2"
+                    >{card.label}</span
+                >
+                <div class="flex items-baseline gap-1.5">
+                    <span
+                        class="text-4xl font-light tracking-tight text-text-primary tabular-nums"
+                    >
+                        {stats ? (stats as any)[card.key] || 0 : 0}
+                    </span>
+                    <span
+                        class="text-[10px] font-bold uppercase text-text-tertiary tracking-wider opacity-60"
+                        >{card.unit}</span
+                    >
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  {/each}
+    {/each}
 </div>
