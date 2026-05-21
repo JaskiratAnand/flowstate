@@ -15,7 +15,7 @@ let newTaskCategory = 'Work';
 let newTaskPriority: PriorityLevel = 'none';
 let moveHighPriorityToTop = true;
 let lastValidItems: Task[] = [];
-let pendingSortTaskIds = new Set<string>();
+const pendingSortTaskIds = new Set<string>();
 
 onDestroy(() => {
   finalizePendingSorts();

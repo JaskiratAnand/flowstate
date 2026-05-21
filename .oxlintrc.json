@@ -5,9 +5,16 @@
     "browser": true,
     "es2022": true
   },
+  "globals": {
+    "browser": "readonly",
+    "chrome": "readonly",
+    "defineBackground": "readonly",
+    "defineContentScript": "readonly",
+    "defineUnlistedScript": "readonly"
+  },
   "rules": {
     "no-debugger": "error",
-    "no-console": "warn",
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
     "no-unused-vars": "warn",
     "no-undef": "error",
     "no-var": "error",
@@ -17,5 +24,16 @@
     "object-shorthand": "error",
     "no-duplicate-imports": "error",
     "import/no-duplicates": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.svelte"],
+      "rules": {
+        "no-undef": "off",
+        "prefer-const": "off",
+        "no-unassigned-vars": "off",
+        "no-unused-vars": "off"
+      }
+    }
+  ]
 }
