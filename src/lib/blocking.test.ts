@@ -190,8 +190,27 @@ describe('Blocking Engine - Dynamic Rules Generator', () => {
           regexFilter: '^https?://.*$',
           resourceTypes: ['main_frame'],
           excludedRequestDomains: ['wikipedia.org'],
+          excludedInitiatorDomains: ['mock-extension-id'],
         },
       });
+    });
+
+    it('includes extension origin in excludedInitiatorDomains even with empty allowedSites', () => {
+      const config: BlockingConfig = {
+        ...defaultBlockingConfig,
+        mode: 'allowlist',
+        allowedSites: [],
+      };
+      const rules = generateDynamicRules(
+        config,
+        defaultTimerState,
+        emptyBypasses,
+      );
+      expect(rules.length).toBe(1);
+      expect(rules[0].condition.excludedInitiatorDomains).toEqual([
+        'mock-extension-id',
+      ]);
+      expect(rules[0].condition.excludedRequestDomains).toEqual([]);
     });
 
     it('includes active bypassed domains in excludedRequestDomains', () => {
@@ -213,6 +232,9 @@ describe('Blocking Engine - Dynamic Rules Generator', () => {
       expect(rules[0].condition.excludedRequestDomains).not.toContain(
         'bing.com',
       );
+      expect(rules[0].condition.excludedInitiatorDomains).toEqual([
+        'mock-extension-id',
+      ]);
     });
   });
 });

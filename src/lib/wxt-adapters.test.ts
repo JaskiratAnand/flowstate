@@ -1,29 +1,33 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { WxtAlarmAdapter } from './wxt-adapters';
+
+vi.mock('wxt/browser', () => ({
+  browser: {
+    alarms: {
+      create: vi.fn(),
+      clear: vi.fn(),
+    },
+  },
+}));
+
+import { browser } from 'wxt/browser';
 
 describe('WxtAlarmAdapter', () => {
   beforeEach(() => {
-    vi.useFakeTimers();
+    vi.clearAllMocks();
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it('should trigger a tick every second using setInterval', async () => {
-    const onTick = vi.fn();
-    const adapter = new WxtAlarmAdapter(onTick);
-
+  it('scheduleTick creates a browser alarm named pomodoro-tick with a 1-second period', async () => {
+    const adapter = new WxtAlarmAdapter();
     await adapter.scheduleTick();
+    expect(browser.alarms.create).toHaveBeenCalledWith('pomodoro-tick', {
+      periodInMinutes: 1 / 60,
+    });
+  });
 
-    vi.advanceTimersByTime(1000);
-    expect(onTick).toHaveBeenCalledTimes(1);
-
-    vi.advanceTimersByTime(1000);
-    expect(onTick).toHaveBeenCalledTimes(2);
-
+  it('clearTick clears the pomodoro-tick browser alarm', async () => {
+    const adapter = new WxtAlarmAdapter();
     await adapter.clearTick();
-    vi.advanceTimersByTime(1000);
-    expect(onTick).toHaveBeenCalledTimes(2);
+    expect(browser.alarms.clear).toHaveBeenCalledWith('pomodoro-tick');
   });
 });

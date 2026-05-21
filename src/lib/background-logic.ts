@@ -13,7 +13,7 @@ import { generateDynamicRules, getCleanDomain } from './blocking';
 
 const engine = new TimerEngineImpl(
   new WxtStorageAdapter(),
-  new WxtAlarmAdapter(() => handleAlarm({ name: 'pomodoro-tick' })),
+  new WxtAlarmAdapter(),
   new WxtFeedbackAdapter(),
 );
 
@@ -171,6 +171,13 @@ export async function handleInstalled() {
   browser.alarms.create('check-bypass-expiry', {
     periodInMinutes: 1,
   });
+
+  // Always sync DNR rules — they don't survive extension reloads
+  await syncBlockingRules();
+}
+
+export async function handleStartup() {
+  await syncBlockingRules();
 }
 
 export async function syncBlockingRules() {

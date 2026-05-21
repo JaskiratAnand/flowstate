@@ -119,6 +119,7 @@ export function generateDynamicRules(
           regexFilter: '^https?://.*$',
           resourceTypes: ['main_frame'],
           excludedRequestDomains: uniqueExcluded,
+          excludedInitiatorDomains: [browser.runtime.id],
         },
       },
     ];

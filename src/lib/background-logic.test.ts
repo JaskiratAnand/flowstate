@@ -4,7 +4,9 @@ import {
   handleAlarm,
   handleInstalled,
   handleStorageChange,
+  handleStartup,
 } from './background-logic';
+
 import { browser } from 'wxt/browser';
 import { STORAGE_KEYS } from './storage';
 
@@ -412,6 +414,112 @@ describe('Background Logic', () => {
       const expiresAt = setCall[STORAGE_KEYS.BYPASS_LIST][0].expiresAt;
       expect(expiresAt).toBeGreaterThanOrEqual(beforeTime + 10 * 60 * 1000);
       expect(expiresAt).toBeLessThanOrEqual(afterTime + 10 * 60 * 1000);
+    });
+  });
+
+  describe('handleStartup', () => {
+    it('syncs DNR blocking rules on every call (SW wake-up)', async () => {
+      const mockConfig = {
+        enabled: true,
+        mode: 'blocklist' as const,
+        strictMode: true,
+        bypassDuration: 5,
+        blockedSites: ['youtube.com'],
+        allowedSites: [],
+      };
+      const mockState = {
+        status: 'idle' as const,
+        remainingSeconds: 1500,
+        sessionType: 'work' as const,
+        completedSessions: 0,
+      };
+
+      vi.mocked(browser.storage.local.get).mockImplementation(async (key) => {
+        if (key === STORAGE_KEYS.BLOCKING_CONFIG)
+          return { [STORAGE_KEYS.BLOCKING_CONFIG]: mockConfig };
+        if (key === STORAGE_KEYS.TIMER_STATE)
+          return { [STORAGE_KEYS.TIMER_STATE]: mockState };
+        if (key === STORAGE_KEYS.BYPASS_LIST)
+          return { [STORAGE_KEYS.BYPASS_LIST]: [] };
+        return {};
+      });
+      vi.mocked(
+        browser.declarativeNetRequest.getDynamicRules,
+      ).mockResolvedValue([] as any);
+
+      await handleStartup();
+
+      expect(
+        browser.declarativeNetRequest.updateDynamicRules,
+      ).toHaveBeenCalled();
+    });
+  });
+
+  describe('handleInstalled (always syncs rules)', () => {
+    it('calls updateDynamicRules even when all storage keys already exist', async () => {
+      const existingConfig = {
+        enabled: true,
+        mode: 'blocklist' as const,
+        strictMode: false,
+        bypassDuration: 5,
+        blockedSites: ['youtube.com'],
+        allowedSites: [],
+      };
+      const existingState = {
+        status: 'running' as const,
+        remainingSeconds: 600,
+        sessionType: 'work' as const,
+        completedSessions: 2,
+      };
+      const existingStats = {
+        dailyPomodoros: 3,
+        dailyTasksCompleted: 4,
+        currentStreak: 2,
+        allTimePomodoros: 10,
+        lastActiveDate: '2026-05-20',
+      };
+      const existingPrefs = {
+        theme: 'ocean' as const,
+        colorScheme: 'dark' as const,
+        fontFamily: 'mono' as const,
+        lastActiveTab: 'tasks' as const,
+        moveHighPriorityToTop: true,
+      };
+      const existingBypassList = [
+        { domain: 'x.com', expiresAt: Date.now() + 9999 },
+      ];
+
+      vi.mocked(browser.storage.local.get).mockImplementation(async (key) => {
+        if (key === STORAGE_KEYS.TIMER_CONFIG)
+          return {
+            [STORAGE_KEYS.TIMER_CONFIG]: {
+              workDuration: 50,
+              shortBreakDuration: 10,
+              longBreakDuration: 20,
+            },
+          };
+        if (key === STORAGE_KEYS.TIMER_STATE)
+          return { [STORAGE_KEYS.TIMER_STATE]: existingState };
+        if (key === STORAGE_KEYS.STATS)
+          return { [STORAGE_KEYS.STATS]: existingStats };
+        if (key === STORAGE_KEYS.USER_PREFERENCES)
+          return { [STORAGE_KEYS.USER_PREFERENCES]: existingPrefs };
+        if (key === STORAGE_KEYS.BLOCKING_CONFIG)
+          return { [STORAGE_KEYS.BLOCKING_CONFIG]: existingConfig };
+        if (key === STORAGE_KEYS.BYPASS_LIST)
+          return { [STORAGE_KEYS.BYPASS_LIST]: existingBypassList };
+        return {};
+      });
+      vi.mocked(
+        browser.declarativeNetRequest.getDynamicRules,
+      ).mockResolvedValue([] as any);
+
+      await handleInstalled();
+
+      // Even though no storage keys were missing, DNR rules must still be synced
+      expect(
+        browser.declarativeNetRequest.updateDynamicRules,
+      ).toHaveBeenCalled();
     });
   });
 });
