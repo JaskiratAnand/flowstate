@@ -33,8 +33,8 @@ export function isDomainBypassed(
     const cleanBypass = getCleanDomain(item.domain);
     return (
       cleanSite === cleanBypass ||
-      cleanSite.endsWith('.' + cleanBypass) ||
-      cleanBypass.endsWith('.' + cleanSite)
+      cleanSite.endsWith(`.${cleanBypass}`) ||
+      cleanBypass.endsWith(`.${cleanSite}`)
     );
   });
 }
