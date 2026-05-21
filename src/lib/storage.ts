@@ -6,6 +6,8 @@ import type {
   DailyArchive,
   Stats,
   UserPreferences,
+  BlockingConfig,
+  BypassItem,
 } from './types';
 
 export const STORAGE_KEYS = {
@@ -15,6 +17,8 @@ export const STORAGE_KEYS = {
   DAILY_ARCHIVE: 'daily_archive',
   STATS: 'stats',
   USER_PREFERENCES: 'user_preferences',
+  BLOCKING_CONFIG: 'blocking_config',
+  BYPASS_LIST: 'bypass_list',
 } as const;
 
 export type StorageKey = keyof typeof STORAGE_KEYS;
@@ -26,6 +30,8 @@ export interface StorageValueMap {
   DAILY_ARCHIVE: DailyArchive;
   STATS: Stats;
   USER_PREFERENCES: UserPreferences;
+  BLOCKING_CONFIG: BlockingConfig;
+  BYPASS_LIST: BypassItem[];
 }
 
 export async function getStorageItem<K extends StorageKey>(

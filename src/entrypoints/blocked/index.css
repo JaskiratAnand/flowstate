@@ -1,0 +1,39 @@
+@import "../../styles/themes.css";
+@import "tailwindcss";
+
+@theme {
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-surface: var(--surface);
+  
+  --font-heading: "Fraunces", serif;
+  --font-body: var(--font-main, "Karla"), sans-serif;
+}
+
+body {
+  @apply bg-bg-primary text-text-primary transition-colors duration-500 ease-out antialiased;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  font-family: var(--font-main, "Karla"), sans-serif;
+  overflow: hidden;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-main, "Karla"), sans-serif;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

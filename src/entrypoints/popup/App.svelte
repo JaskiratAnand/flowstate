@@ -10,11 +10,13 @@ import Timer from '../../components/Timer.svelte';
 import TodoList from '../../components/TodoList.svelte';
 import StatsDashboard from '../../components/StatsDashboard.svelte';
 import About from '../../components/About.svelte';
+import BlockingModal from '../../components/BlockingModal.svelte';
 
 let activeTab: TabType = 'timer';
 let preferences: UserPreferences | null = null;
 let systemDarkMode = false;
 let mediaQuery: MediaQueryList;
+let showBlockingModal = false;
 
 function handleSystemThemeChange(e: MediaQueryListEvent | MediaQueryList) {
   systemDarkMode = e.matches;
@@ -192,7 +194,7 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
 
         <div class="flex-1 overflow-hidden px-8 pt-2 pb-4">
             <div
-                class="tab-content h-full pb-1 overflow-y-auto scrollbar-none animate-in fade-in duration-700"
+                class="tab-content h-full overflow-y-auto scrollbar-none animate-in fade-in duration-700"
             >
                 {#if activeTab === "timer"}
                     <Timer />
@@ -203,17 +205,61 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
                 {:else if activeTab === "about"}
                     <About />
                 {:else if activeTab === "settings"}
-                    <div class="space-y-8">
+                    <div class="space-y-8 pb-24">
                         <ThemePicker
                             {preferences}
                             onUpdate={handlePrefsUpdate}
                         />
+                        <div class="space-y-4 pt-4 border-t border-border/50">
+                            <span
+                                class="block text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1"
+                                >Focus Shield</span
+                            >
+                            <button
+                                type="button"
+                                class="w-full p-4 flex items-center justify-between bg-surface rounded-2xl shadow-(--shadow-ambient) border border-border hover:scale-[1.01] active:scale-[0.99] transition-all"
+                                on:click={() => (showBlockingModal = true)}
+                            >
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xl">🛡️</span>
+                                    <div
+                                        class="flex flex-col items-start text-left gap-0.5"
+                                    >
+                                        <span
+                                            class="text-xs font-semibold text-text-primary"
+                                            >Configure Blocker</span
+                                        >
+                                        <span
+                                            class="text-[10px] text-text-tertiary"
+                                            >Set blocked domains & bypass
+                                            durations</span
+                                        >
+                                    </div>
+                                </div>
+                                <svg
+                                    class="w-4 h-4 text-text-tertiary"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2.5"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M9 5l7 7-7 7"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 {/if}
             </div>
         </div>
 
         <TabBar {activeTab} onTabChange={handleTabChange} />
+        {#if showBlockingModal}
+            <BlockingModal onClose={() => (showBlockingModal = false)} />
+        {/if}
     </main>
 {:else}
     <div class="flex items-center justify-center h-full">

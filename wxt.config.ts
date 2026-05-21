@@ -14,7 +14,15 @@ export default defineConfig({
       'storage',
       'alarms',
       'notifications',
+      'declarativeNetRequest',
       ...(browser === 'firefox' ? [] : ['offscreen']),
+    ],
+    host_permissions: ['<all_urls>'],
+    web_accessible_resources: [
+      {
+        resources: ['blocked.html'],
+        matches: ['<all_urls>'],
+      },
     ],
     action: {
       default_icon: 'icon/48.png',

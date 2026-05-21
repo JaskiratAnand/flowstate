@@ -57,9 +57,24 @@ export type MessageType =
   | 'PAUSE_TIMER'
   | 'RESET_TIMER'
   | 'SKIP_SESSION'
-  | 'UPDATE_CONFIG';
+  | 'UPDATE_CONFIG'
+  | 'BYPASS_SITE';
 
 export interface ActionMessage {
   type: MessageType;
   payload?: any;
+}
+
+export interface BlockingConfig {
+  enabled: boolean;
+  mode: 'blocklist' | 'allowlist';
+  strictMode: boolean;
+  bypassDuration: number; // in minutes
+  blockedSites: string[];
+  allowedSites: string[];
+}
+
+export interface BypassItem {
+  domain: string;
+  expiresAt: number; // timestamp in ms
 }
