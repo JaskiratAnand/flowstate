@@ -12,19 +12,29 @@
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
-    "formatWithErrors": true
-  },
-  "linter": {
-    "enabled": false
+    "formatWithErrors": true,
+    "includes": ["**/*.js", "**/*.ts", "**/*.svelte"]
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single"
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "all",
+      "arrowParentheses": "always",
+      "bracketSameLine": false,
+      "bracketSpacing": true
     }
   },
   "css": {
     "formatter": {
-      "enabled": false
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.svelte"]
+    }
+  ]
 }
