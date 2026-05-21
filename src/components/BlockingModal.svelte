@@ -16,6 +16,7 @@ const activeList = $derived(mode === 'blocklist' ? blockedSites : allowedSites);
 
 let newSiteInput = $state('');
 let inputError = $state('');
+let isLoaded = $state(false);
 
 onMount(async () => {
   const config = await getStorageItem('BLOCKING_CONFIG');
@@ -26,18 +27,38 @@ onMount(async () => {
     mode = config.mode || 'blocklist';
     blockedSites = config.blockedSites || [];
     allowedSites = config.allowedSites || [];
+  } else {
+    // If not found in storage, initialize defaults without writing to storage until modified
+    enabled = true;
+    strictMode = false;
+    bypassDuration = 5;
+    mode = 'blocklist';
+    blockedSites = [
+      'youtube.com',
+      'twitter.com',
+      'x.com',
+      'reddit.com',
+      'instagram.com',
+      'facebook.com',
+    ];
+    allowedSites = [];
   }
+  isLoaded = true;
 });
 
 async function saveConfig() {
-  await setStorageItem('BLOCKING_CONFIG', {
-    enabled,
-    strictMode,
-    bypassDuration,
-    mode,
-    blockedSites,
-    allowedSites,
-  });
+  if (!isLoaded) return;
+  await setStorageItem(
+    'BLOCKING_CONFIG',
+    $state.snapshot({
+      enabled,
+      strictMode,
+      bypassDuration,
+      mode,
+      blockedSites,
+      allowedSites,
+    }),
+  );
 }
 
 function handleEnabledToggle() {

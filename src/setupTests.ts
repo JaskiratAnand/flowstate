@@ -34,3 +34,21 @@ vi.mock('svelte/transition', () => {
     crossfade: noopTransition,
   };
 });
+
+vi.mock('wxt/browser', () => {
+  return {
+    browser: {
+      runtime: {
+        id: 'mock-extension-id',
+        getURL: (path: string) =>
+          `chrome-extension://mock-extension-id/${path}`,
+      },
+      storage: {
+        local: {
+          get: vi.fn(() => Promise.resolve({})),
+          set: vi.fn(() => Promise.resolve()),
+        },
+      },
+    },
+  };
+});

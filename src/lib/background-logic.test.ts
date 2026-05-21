@@ -10,6 +10,9 @@ import { STORAGE_KEYS } from './storage';
 
 vi.mock('wxt/browser', () => ({
   browser: {
+    runtime: {
+      id: 'mock-extension-id',
+    },
     storage: {
       local: {
         get: vi.fn(),

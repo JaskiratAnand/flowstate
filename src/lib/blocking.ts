@@ -1,3 +1,4 @@
+import { browser } from 'wxt/browser';
 import type { BlockingConfig, TimerState, BypassItem } from './types';
 
 /**
@@ -82,8 +83,7 @@ export function generateDynamicRules(
         action: {
           type: 'redirect',
           redirect: {
-            regexSubstitution:
-              'chrome-extension://__MSG_@@extension_id__/blocked.html?url=\\0',
+            regexSubstitution: `chrome-extension://${browser.runtime.id}/blocked.html?url=\\0`,
           },
         },
         condition: {
@@ -112,8 +112,7 @@ export function generateDynamicRules(
         action: {
           type: 'redirect',
           redirect: {
-            regexSubstitution:
-              'chrome-extension://__MSG_@@extension_id__/blocked.html?url=\\0',
+            regexSubstitution: `chrome-extension://${browser.runtime.id}/blocked.html?url=\\0`,
           },
         },
         condition: {

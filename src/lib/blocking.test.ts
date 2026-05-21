@@ -104,7 +104,7 @@ describe('Blocking Engine - Dynamic Rules Generator', () => {
           type: 'redirect',
           redirect: {
             regexSubstitution:
-              'chrome-extension://__MSG_@@extension_id__/blocked.html?url=\\0',
+              'chrome-extension://mock-extension-id/blocked.html?url=\\0',
           },
         },
         condition: {
@@ -183,7 +183,7 @@ describe('Blocking Engine - Dynamic Rules Generator', () => {
           type: 'redirect',
           redirect: {
             regexSubstitution:
-              'chrome-extension://__MSG_@@extension_id__/blocked.html?url=\\0',
+              'chrome-extension://mock-extension-id/blocked.html?url=\\0',
           },
         },
         condition: {
