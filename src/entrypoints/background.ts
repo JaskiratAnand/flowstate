@@ -4,19 +4,18 @@ import {
   handleStorageChange,
   handleInstalled,
   handleStartup,
-  syncBlockingRules,
 } from '../lib/background-logic';
 
 export default defineBackground(() => {
-  // Re-sync DNR rules on every SW wake-up (runs before any event listeners)
-  syncBlockingRules().catch(console.error);
-
-  // Belt-and-suspenders: also sync on explicit browser startup
+  // Sync rules after browser restarts (DNR rules persist across SW restarts
+  // but not across full browser restarts or extension reloads — those are
+  // covered by onStartup and onInstalled respectively).
   browser.runtime.onStartup.addListener(() => {
     handleStartup().catch(console.error);
   });
 
-  // Initialize storage if empty
+  // Initialize storage if empty, and always re-sync DNR rules
+  // (rules don't survive extension reload/update).
   browser.runtime.onInstalled.addListener(async () => {
     await handleInstalled();
   });
