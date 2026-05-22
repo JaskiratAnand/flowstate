@@ -248,7 +248,18 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
                                 on:click={() => (showBlockingModal = true)}
                             >
                                 <div class="flex items-center gap-3">
-                                    <span class="text-xl">🛡️</span>
+                                    <svg
+                                        class="w-5 h-5 text-accent"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                    </svg>
                                     <div
                                         class="flex flex-col items-start text-left gap-0.5"
                                     >

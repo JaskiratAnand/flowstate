@@ -202,7 +202,19 @@ function handleKeyPress(e: KeyboardEvent) {
                             onclick={handleBypass}
                             class="w-full py-4 rounded-full bg-surface border border-border text-xs font-bold uppercase tracking-wider text-text-primary shadow-(--shadow-ambient) hover:scale-102 active:shadow-(--shadow-pressed) active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
                         >
-                            🛡️ Bypass for {bypassDuration} Mins
+                            <svg
+                                class="w-4 h-4 text-accent"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                            Bypass for {bypassDuration} Mins
                         </button>
                     {/if}
 
