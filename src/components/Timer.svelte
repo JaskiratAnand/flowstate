@@ -6,9 +6,12 @@ import { useTimer } from '../lib/timer-store';
 import type { TimerConfig } from '../lib/types';
 import TimerConfigComp from './TimerConfig.svelte';
 
+export let onOpenFocusShield: () => void = () => {};
+
 const timer = useTimer();
 let config: TimerConfig | null = null;
 let showConfig = false;
+let blockingEnabled = true;
 
 onMount(async () => {
   config = (await getStorageItem('TIMER_CONFIG')) || {
@@ -16,6 +19,9 @@ onMount(async () => {
     shortBreakDuration: 5,
     longBreakDuration: 15,
   };
+
+  const blockingConfig = await getStorageItem('BLOCKING_CONFIG');
+  blockingEnabled = blockingConfig ? blockingConfig.enabled : true;
 
   browser.storage.onChanged.addListener(handleStorageChange);
 });
@@ -29,6 +35,11 @@ function handleStorageChange(changes: Record<string, any>, areaName: string) {
 
   if (changes[STORAGE_KEYS.TIMER_CONFIG]) {
     config = changes[STORAGE_KEYS.TIMER_CONFIG].newValue;
+  }
+
+  if (changes[STORAGE_KEYS.BLOCKING_CONFIG]) {
+    const newBlockingConfig = changes[STORAGE_KEYS.BLOCKING_CONFIG].newValue;
+    blockingEnabled = newBlockingConfig ? newBlockingConfig.enabled : true;
   }
 }
 
@@ -252,4 +263,37 @@ function handleDialClick() {
             </div>
         {/if}
     </div>
+
+    <!-- Focus Shield Shortcut -->
+    <button
+        type="button"
+        class="w-full mt-4 py-4 px-6 flex items-center justify-between rounded-2xl bg-surface shadow-(--shadow-ambient) hover:bg-bg-primary transition-all active:shadow-(--shadow-pressed) select-none"
+        on:click={onOpenFocusShield}
+    >
+        <div class="flex items-center gap-3">
+            <span class="text-lg" aria-hidden="true">🛡️</span>
+            <span class="text-sm font-semibold text-text-secondary">Focus Shield</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <span
+                class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                style="background-color: color-mix(in srgb, {blockingEnabled ? 'var(--color-green)' : 'var(--text-tertiary)'} 15%, transparent); color: {blockingEnabled ? 'var(--color-green)' : 'var(--text-tertiary)'};"
+            >
+                {blockingEnabled ? 'Active' : 'Off'}
+            </span>
+            <svg
+                class="w-4 h-4 text-text-tertiary"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2.5"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 5l7 7-7 7"
+                />
+            </svg>
+        </div>
+    </button>
 </div>

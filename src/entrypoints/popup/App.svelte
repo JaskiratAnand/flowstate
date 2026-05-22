@@ -224,7 +224,7 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
                 on:scroll={handleScroll}
             >
                 {#if activeTab === "timer"}
-                    <Timer />
+                    <Timer onOpenFocusShield={() => (showBlockingModal = true)} />
                 {:else if activeTab === "tasks"}
                     <TodoList />
                 {:else if activeTab === "stats"}
