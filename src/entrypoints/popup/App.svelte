@@ -1,5 +1,6 @@
 <script lang="ts">
 import { onMount, onDestroy } from 'svelte';
+import { fade } from 'svelte/transition';
 import type { TabType, UserPreferences } from '../../lib/types';
 import { getStorageItem, setStorageItem } from '../../lib/storage';
 import TabBar from '../../components/TabBar.svelte';
@@ -17,6 +18,31 @@ let preferences: UserPreferences | null = null;
 let systemDarkMode = false;
 let mediaQuery: MediaQueryList;
 let showBlockingModal = false;
+
+let showSettingsScrollHint = false;
+
+function handleScroll(e: Event) {
+  if (activeTab === 'settings') {
+    const target = e.currentTarget as HTMLElement;
+    if (target.scrollTop > 10) {
+      showSettingsScrollHint = false;
+    } else {
+      showSettingsScrollHint = true;
+    }
+  }
+}
+
+$: if (activeTab === 'settings') {
+  showSettingsScrollHint = true;
+  setTimeout(() => {
+    const container = document.querySelector('.tab-content');
+    if (container) {
+      container.scrollTop = 0;
+    }
+  }, 0);
+} else {
+  showSettingsScrollHint = false;
+}
 
 function handleSystemThemeChange(e: MediaQueryListEvent | MediaQueryList) {
   systemDarkMode = e.matches;
@@ -195,6 +221,7 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
         <div class="flex-1 overflow-hidden px-8 pt-2 pb-4">
             <div
                 class="tab-content h-full overflow-y-auto scrollbar-none animate-in fade-in duration-700"
+                on:scroll={handleScroll}
             >
                 {#if activeTab === "timer"}
                     <Timer />
@@ -252,6 +279,27 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
                             </button>
                         </div>
                     </div>
+                    {#if showSettingsScrollHint}
+                        <div
+                            transition:fade={{ duration: 200 }}
+                            class="fixed bottom-22 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2 rounded-full border border-border shadow-(--shadow-ambient) text-text-secondary text-[10px] font-semibold uppercase tracking-wider pointer-events-none transition-all duration-300"
+                            style="background-color: var(--surface-raised);"
+                            aria-hidden="true"
+                        >
+                            <span>Scroll to explore</span>
+                            <svg
+                                class="w-3.5 h-3.5 text-accent animate-bounce"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                viewBox="0 0 24 24"
+                            >
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                    {/if}
                 {/if}
             </div>
         </div>

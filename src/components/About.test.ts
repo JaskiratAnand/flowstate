@@ -53,11 +53,12 @@ describe('About Component', () => {
     document.body.removeChild(tabContent);
   });
 
-  it('renders all three accordion card titles', () => {
+  it('renders all four accordion card titles', () => {
     const { getByText } = render(About);
     expect(getByText('What is Pomodoro?')).toBeInTheDocument();
     expect(getByText('Timer Modes')).toBeInTheDocument();
     expect(getByText('Task List')).toBeInTheDocument();
+    expect(getByText('Focus Shield')).toBeInTheDocument();
   });
 
   it('cards are collapsed by default on mount', () => {
@@ -66,18 +67,22 @@ describe('About Component', () => {
     const pomodoroBtn = getByText('What is Pomodoro?').closest('button');
     const modesBtn = getByText('Timer Modes').closest('button');
     const tasksBtn = getByText('Task List').closest('button');
+    const shieldBtn = getByText('Focus Shield').closest('button');
 
     expect(pomodoroBtn).toHaveAttribute('aria-expanded', 'false');
     expect(modesBtn).toHaveAttribute('aria-expanded', 'false');
     expect(tasksBtn).toHaveAttribute('aria-expanded', 'false');
+    expect(shieldBtn).toHaveAttribute('aria-expanded', 'false');
 
     const pomodoroContent = document.getElementById('card-pomodoro-content');
     const modesContent = document.getElementById('card-modes-content');
     const tasksContent = document.getElementById('card-tasks-content');
+    const shieldContent = document.getElementById('card-shield-content');
 
     expect(pomodoroContent).toHaveAttribute('aria-hidden', 'true');
     expect(modesContent).toHaveAttribute('aria-hidden', 'true');
     expect(tasksContent).toHaveAttribute('aria-hidden', 'true');
+    expect(shieldContent).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('toggles accordion content when clicking header', async () => {
@@ -128,7 +133,7 @@ describe('About Component', () => {
     const { container } = render(About);
 
     const buttons = container.querySelectorAll('button[type="button"]');
-    expect(buttons.length).toBe(3);
+    expect(buttons.length).toBe(4);
 
     buttons.forEach((btn) => {
       expect(btn).toHaveAttribute('aria-controls');

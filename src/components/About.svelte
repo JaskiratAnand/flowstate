@@ -8,6 +8,7 @@ const version = browser.runtime.getManifest().version;
 let card1Open = $state(false);
 let card2Open = $state(false);
 let card3Open = $state(false);
+let card4Open = $state(false);
 
 let showScrollHint = $state(true);
 let scrollContainer: HTMLElement | null = null;
@@ -369,6 +370,103 @@ onDestroy(() => {
                                 before starting a Focus session. It keeps you
                                 anchored to a single intention and makes the
                                 timer feel more purposeful.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Focus Shield -->
+            <div
+                class="w-full bg-surface rounded-2xl border border-border/5 transition-all duration-300 {card4Open
+                    ? 'shadow-(--shadow-pressed)'
+                    : 'shadow-(--shadow-ambient)'}"
+            >
+                <button
+                    type="button"
+                    class="w-full flex items-center justify-between p-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded-2xl cursor-pointer"
+                    onclick={() => (card4Open = !card4Open)}
+                    aria-expanded={card4Open}
+                    aria-controls="card-shield-content"
+                >
+                    <div class="flex items-center gap-3">
+                        <svg
+                            class="w-5 h-5 text-accent"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path
+                                d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                            />
+                        </svg>
+                        <span class="font-medium text-text-primary text-sm"
+                            >Focus Shield</span
+                        >
+                    </div>
+                    <svg
+                        class="w-4 h-4 text-text-tertiary transition-transform duration-300 {card4Open
+                            ? 'rotate-180'
+                            : ''}"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                    >
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <div
+                    id="card-shield-content"
+                    class="grid transition-[grid-template-rows] duration-300 ease-in-out accordion-content"
+                    style="grid-template-rows: {card4Open ? '1fr' : '0fr'};"
+                    aria-hidden={!card4Open}
+                >
+                    <div class="overflow-hidden min-h-0">
+                        <div
+                            class="px-4 pb-4 pt-1 text-sm text-text-secondary leading-relaxed space-y-3"
+                        >
+                            <p>
+                                Focus Shield is a website blocker designed to
+                                protect your attention from digital noise.
+                            </p>
+                            <p>
+                                <span class="text-text-primary font-semibold"
+                                    >Blocked Domains</span
+                                > — Add websites you want to restrict during work
+                                (e.g. social media, news). When you try to visit them,
+                                they will be replaced with a breathing exercise to
+                                ground you.
+                            </p>
+                            <p>
+                                <span class="text-text-primary font-semibold"
+                                    >Bypass Durations</span
+                                > — Sometimes you need quick access. You can grant
+                                yourself a short, temporary bypass after completing
+                                a deep breath.
+                            </p>
+                            <p>
+                                <span class="text-text-primary font-semibold"
+                                    >Strict Mode</span
+                                > — By default, blocks only apply during active Focus
+                                sessions. Enabling Strict Mode keeps distractions
+                                blocked even when your timer is idle or on a break.
+                            </p>
+                            <p>
+                                To configure your shield, go to <span
+                                    class="text-text-primary font-semibold"
+                                    >Settings</span
+                                >, tap
+                                <span class="text-text-primary font-semibold"
+                                    >Configure Blocker</span
+                                >, and add the websites you'd like to filter
+                                out.
                             </p>
                         </div>
                     </div>
