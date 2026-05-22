@@ -1,5 +1,6 @@
 <script lang="ts">
 import { onMount, onDestroy } from 'svelte';
+const isPro = import.meta.env.WXT_PRO_VERSION === 'true';
 import { fade } from 'svelte/transition';
 import type { TabType, UserPreferences } from '../../lib/types';
 import { getStorageItem, setStorageItem } from '../../lib/storage';
@@ -72,13 +73,15 @@ onMount(async () => {
   }
 
   // Lock pro features if active
-  if (prefs.theme === 'custom') {
-    prefs.theme = 'forest';
-    updated = true;
-  }
-  if (prefs.fontFamily !== 'karla') {
-    prefs.fontFamily = 'karla';
-    updated = true;
+  if (!isPro) {
+    if (prefs.theme === 'custom') {
+      prefs.theme = 'forest';
+      updated = true;
+    }
+    if (prefs.fontFamily !== 'karla') {
+      prefs.fontFamily = 'karla';
+      updated = true;
+    }
   }
 
   if (updated) {
@@ -185,12 +188,22 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
                         />
                     </svg>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight text-text-primary">
-                    {activeTab === "timer"
-                        ? "FlowState"
-                        : activeTab.charAt(0).toUpperCase() +
-                          activeTab.slice(1)}
-                </h1>
+                <div class="flex items-center gap-2">
+                    <h1
+                        class="text-xl font-bold tracking-tight text-text-primary"
+                    >
+                        {activeTab === "timer"
+                            ? "FlowState"
+                            : activeTab.charAt(0).toUpperCase() +
+                              activeTab.slice(1)}
+                    </h1>
+                    {#if isPro}
+                        <span
+                            class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-accent/15 text-accent select-none"
+                            >PRO</span
+                        >
+                    {/if}
+                </div>
             </button>
 
             <button
@@ -224,7 +237,9 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
                 on:scroll={handleScroll}
             >
                 {#if activeTab === "timer"}
-                    <Timer onOpenFocusShield={() => (showBlockingModal = true)} />
+                    <Timer
+                        onOpenFocusShield={() => (showBlockingModal = true)}
+                    />
                 {:else if activeTab === "tasks"}
                     <TodoList />
                 {:else if activeTab === "stats"}
@@ -258,7 +273,9 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
                                         stroke-linejoin="round"
                                         aria-hidden="true"
                                     >
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                        <path
+                                            d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                                        />
                                     </svg>
                                     <div
                                         class="flex flex-col items-start text-left gap-0.5"
@@ -297,7 +314,7 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
                             style="background-color: var(--surface-raised);"
                             aria-hidden="true"
                         >
-                            <span>Scroll to explore</span>
+                            <span>Scroll</span>
                             <svg
                                 class="w-3.5 h-3.5 text-accent animate-bounce"
                                 fill="none"

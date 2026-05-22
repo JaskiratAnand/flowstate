@@ -30,7 +30,7 @@ describe('About Component', () => {
     document.body.appendChild(tabContent);
 
     const { getByText, queryByText } = render(About);
-    expect(getByText('Scroll to explore')).toBeInTheDocument();
+    expect(getByText('Scroll')).toBeInTheDocument();
 
     // Trigger scroll > 10
     tabContent.scrollTop = 20;
@@ -38,7 +38,7 @@ describe('About Component', () => {
 
     // Wait for fade out transition and removal from DOM
     await waitFor(() => {
-      expect(queryByText('Scroll to explore')).not.toBeInTheDocument();
+      expect(queryByText('Scroll')).not.toBeInTheDocument();
     });
 
     // Scroll back to top
@@ -47,7 +47,7 @@ describe('About Component', () => {
 
     // Should reappear
     await waitFor(() => {
-      expect(getByText('Scroll to explore')).toBeInTheDocument();
+      expect(getByText('Scroll')).toBeInTheDocument();
     });
 
     document.body.removeChild(tabContent);

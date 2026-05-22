@@ -483,7 +483,7 @@ onDestroy(() => {
         style="background-color: var(--surface-raised);"
         aria-hidden="true"
     >
-        <span>Scroll to explore</span>
+        <span>Scroll</span>
         <svg
             class="w-3.5 h-3.5 text-accent animate-bounce"
             fill="none"

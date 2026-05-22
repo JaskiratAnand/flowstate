@@ -7,6 +7,8 @@ import type {
 } from '../lib/types';
 import { setStorageItem } from '../lib/storage';
 
+const isPro = import.meta.env.WXT_PRO_VERSION === 'true';
+
 export let preferences: UserPreferences;
 export let onUpdate: (prefs: UserPreferences) => void;
 
@@ -102,55 +104,75 @@ function handleCustomColorChange(e: Event) {
             {/each}
 
             <div class="relative w-11 h-11 group">
-                <div
-                    class="absolute -top-9 left-1/2 -translate-x-1/2 px-2.5 py-1.5 rounded-lg bg-text-primary text-bg-primary text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30 shadow-lg translate-y-1 group-hover:translate-y-0 whitespace-nowrap"
-                >
-                    Unlock Pro
-                </div>
-                <div
-                    class="absolute inset-0 bg-surface/40 backdrop-blur-[0.5px] rounded-full z-10 flex items-center justify-center cursor-not-allowed border-2 border-dashed border-border/50"
-                >
-                    <svg
-                        class="w-3.5 h-3.5 text-text-tertiary"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                {#if !isPro}
+                    <div
+                        class="absolute -top-9 left-1/2 -translate-x-1/2 px-2.5 py-1.5 rounded-lg bg-text-primary text-bg-primary text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30 shadow-lg translate-y-1 group-hover:translate-y-0 whitespace-nowrap"
                     >
-                        <rect
-                            x="3"
-                            y="11"
-                            width="18"
-                            height="11"
-                            rx="2"
-                            ry="2"
-                        />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                </div>
+                        Unlock Pro
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-surface/40 backdrop-blur-[0.5px] rounded-full z-10 flex items-center justify-center cursor-not-allowed border-2 border-dashed border-border/50"
+                    >
+                        <svg
+                            class="w-3.5 h-3.5 text-text-tertiary"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <rect
+                                x="3"
+                                y="11"
+                                width="18"
+                                height="11"
+                                rx="2"
+                                ry="2"
+                            />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                    </div>
+                {/if}
                 <input
                     id="custom-color-pro"
                     type="color"
-                    disabled
-                    class="absolute inset-0 w-full h-full opacity-0 cursor-not-allowed z-20"
+                    value={preferences.customAccentColor || '#000000'}
+                    on:input={handleCustomColorChange}
+                    disabled={!isPro}
+                    class="absolute inset-0 w-full h-full opacity-0 z-20 {isPro ? 'cursor-pointer' : 'cursor-not-allowed'}"
                 />
                 <label
                     for="custom-color-pro"
-                    class="flex items-center justify-center w-11 h-11 rounded-full border-4 border-transparent shadow-(--shadow-ambient) bg-bg-primary"
+                    class="flex items-center justify-center w-11 h-11 rounded-full border-4 shadow-(--shadow-ambient) transition-all
+                           {preferences.theme === 'custom' ? 'border-text-primary' : 'border-transparent'}"
+                    style="background-color: {preferences.customAccentColor || 'var(--bg-primary)'}"
                 >
-                    <svg
-                        class="w-5 h-5 text-text-tertiary/30"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path d="M12 5v14M5 12h14" />
-                    </svg>
+                    {#if preferences.theme === 'custom'}
+                        <svg
+                            class="w-5 h-5 text-text-primary"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                    {:else}
+                        <svg
+                            class="w-5 h-5 text-text-tertiary/30"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M12 5v14M5 12h14" />
+                        </svg>
+                    {/if}
                 </label>
             </div>
         </div>
@@ -166,18 +188,18 @@ function handleCustomColorChange(e: Event) {
         >
             {#each fonts as font}
                 <button
-                    disabled={font.isPro}
+                    disabled={font.isPro && !isPro}
                     class="flex-1 py-2.5 flex flex-col items-center justify-center rounded-xl text-xs font-semibold transition-all {font.class}
                  {preferences.fontFamily === font.id
                         ? 'bg-surface text-text-primary shadow-(--shadow-ambient)'
                         : 'text-text-tertiary'}
-                 {font.isPro
+                 {font.isPro && !isPro
                         ? 'opacity-40 cursor-not-allowed'
                         : 'hover:text-text-secondary'}"
                     on:click={() => updatePrefs({ fontFamily: font.id })}
                 >
                     <span>{font.label}</span>
-                    {#if font.isPro}
+                    {#if font.isPro && !isPro}
                         <span
                             class="text-[7px] font-black uppercase tracking-tighter opacity-60"
                             >Pro</span
