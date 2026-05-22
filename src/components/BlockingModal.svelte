@@ -211,7 +211,8 @@ function handleKeyPress(e: KeyboardEvent) {
                 aria-label="Toggle Strict Mode"
             >
                 <div
-                    class="w-4 h-4 rounded-full transition-all duration-300 shadow-(--shadow-ambient){strictMode
+                    class="w-4 h-4 rounded-full transition-all duration-300 shadow-(--shadow-ambient)
+                           {strictMode
                         ? 'bg-accent translate-x-5.5'
                         : 'bg-text-tertiary translate-x-0'}"
                 ></div>
