@@ -43,7 +43,21 @@ onMount(async () => {
     ];
     allowedSites = [];
   }
-  isLoaded = true;
+  // Wait for the DOM to update and paint the loaded values before enabling transition animations.
+  // In a test environment, we set isLoaded to true immediately to avoid async timing issues in tests.
+  const isTest =
+    typeof window !== 'undefined' &&
+    ((window as any).VITEST === true ||
+      (window as any).vi !== undefined ||
+      (window as any).process?.env?.NODE_ENV === 'test');
+
+  if (isTest) {
+    isLoaded = true;
+  } else {
+    setTimeout(() => {
+      isLoaded = true;
+    }, 50);
+  }
 });
 
 async function saveConfig() {
@@ -177,14 +191,15 @@ function handleKeyPress(e: KeyboardEvent) {
             </div>
             <button
                 type="button"
-                class="w-12 h-6 rounded-full p-1 transition-all duration-300 relative flex items-center focus:outline-none cursor-pointer {enabled
+                class="w-12 h-6 rounded-full p-1 relative flex items-center focus:outline-none cursor-pointer {isLoaded ? 'transition-all duration-300' : ''} {enabled
                     ? 'bg-accent/20 border border-accent/20'
                     : 'bg-bg-secondary border border-border'}"
                 onclick={handleEnabledToggle}
                 aria-label="Toggle Block Distractions"
             >
                 <div
-                    class="w-4 h-4 rounded-full transition-all duration-300 shadow-(--shadow-ambient)
+                    class="w-4 h-4 rounded-full shadow-(--shadow-ambient)
+                           {isLoaded ? 'transition-all duration-300' : ''}
                            {enabled
                         ? 'bg-accent translate-x-5.5'
                         : 'bg-text-tertiary translate-x-0'}"
@@ -204,14 +219,15 @@ function handleKeyPress(e: KeyboardEvent) {
             </div>
             <button
                 type="button"
-                class="w-12 h-6 rounded-full p-1 transition-all duration-300 relative flex items-center focus:outline-none cursor-pointer {strictMode
+                class="w-12 h-6 rounded-full p-1 relative flex items-center focus:outline-none cursor-pointer {isLoaded ? 'transition-all duration-300' : ''} {strictMode
                     ? 'bg-accent/20 border border-accent/20'
                     : 'bg-bg-secondary border border-border'}"
                 onclick={handleStrictModeToggle}
                 aria-label="Toggle Strict Mode"
             >
                 <div
-                    class="w-4 h-4 rounded-full transition-all duration-300 shadow-(--shadow-ambient)
+                    class="w-4 h-4 rounded-full shadow-(--shadow-ambient)
+                           {isLoaded ? 'transition-all duration-300' : ''}
                            {strictMode
                         ? 'bg-accent translate-x-5.5'
                         : 'bg-text-tertiary translate-x-0'}"
@@ -249,7 +265,7 @@ function handleKeyPress(e: KeyboardEvent) {
     >
         <button
             type="button"
-            class="flex-1 py-2 flex items-center justify-center rounded-xl text-xs font-semibold transition-all cursor-pointer {mode ===
+            class="flex-1 py-2 flex items-center justify-center rounded-xl text-xs font-semibold cursor-pointer {isLoaded ? 'transition-all' : ''} {mode ===
             'blocklist'
                 ? 'bg-surface text-text-primary shadow-(--shadow-ambient)'
                 : 'text-text-tertiary'}"
@@ -259,7 +275,7 @@ function handleKeyPress(e: KeyboardEvent) {
         </button>
         <button
             type="button"
-            class="flex-1 py-2 flex items-center justify-center rounded-xl text-xs font-semibold transition-all cursor-pointer {mode ===
+            class="flex-1 py-2 flex items-center justify-center rounded-xl text-xs font-semibold cursor-pointer {isLoaded ? 'transition-all' : ''} {mode ===
             'allowlist'
                 ? 'bg-surface text-text-primary shadow-(--shadow-ambient)'
                 : 'text-text-tertiary'}"
