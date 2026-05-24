@@ -20,19 +20,22 @@ function handleClick() {
 </script>
 
 <button
-  type="button"
-  class="w-12 h-6 rounded-full p-1 relative flex items-center focus:outline-none cursor-pointer {isLoaded ? 'transition-all duration-300' : ''} {checked
-    ? 'bg-accent/20 border border-accent/20'
-    : 'bg-bg-secondary border border-border'} {disabled ? 'opacity-50 cursor-not-allowed' : ''}"
-  onclick={handleClick}
-  aria-label={ariaLabel}
-  disabled={disabled}
+    type="button"
+    class="w-12 h-6 rounded-full p-1 relative flex items-center focus:outline-none cursor-pointer shadow-(--shadow-pressed)
+        {isLoaded ? 'transition-all duration-300' : ''}
+        {checked
+        ? 'bg-accent/20 border border-accent/20'
+        : 'bg-(--toggle-track-bg) border border-(--toggle-border)'}
+        {disabled ? 'opacity-50 cursor-not-allowed' : ''}"
+    onclick={handleClick}
+    aria-label={ariaLabel}
+    {disabled}
 >
-  <div
-    class="w-4 h-4 rounded-full shadow-(--shadow-ambient)
+    <div
+        class="w-4 h-4 rounded-full shadow-(--shadow-ambient)
            {isLoaded ? 'transition-all duration-300' : ''}
            {checked
-      ? 'bg-accent translate-x-5.5'
-      : 'bg-text-tertiary translate-x-0'}"
-  ></div>
+            ? 'bg-accent translate-x-5.5'
+            : 'bg-(--toggle-knob-bg) border border-(--toggle-knob-border) translate-x-0'}"
+    ></div>
 </button>

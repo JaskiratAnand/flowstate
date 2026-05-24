@@ -15,9 +15,11 @@ describe('ToggleSwitch Component', () => {
     expect(button).toBeInTheDocument();
     expect(button).toHaveAttribute('aria-label', 'Test Toggle');
     expect(button).not.toHaveClass('bg-accent/20');
+    expect(button).toHaveClass('shadow-(--shadow-pressed)');
 
     const knob = container.querySelector('button > div');
     expect(knob).toHaveClass('translate-x-0');
+    expect(knob).toHaveClass('shadow-(--shadow-ambient)');
 
     await fireEvent.click(button!);
     expect(onchangeMock).toHaveBeenCalledWith(true);

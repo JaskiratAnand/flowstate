@@ -3,6 +3,7 @@ import { onMount } from 'svelte';
 import { getStorageItem, setStorageItem } from '../lib/storage';
 import type { BlockingConfig } from '../lib/types';
 import { getCleanDomain } from '../lib/blocking';
+import ToggleSwitch from './ToggleSwitch.svelte';
 
 let { onClose } = $props<{ onClose: () => void }>();
 
@@ -189,22 +190,12 @@ function handleKeyPress(e: KeyboardEvent) {
                     >Block listed websites during focus sessions</span
                 >
             </div>
-            <button
-                type="button"
-                class="w-12 h-6 rounded-full p-1 relative flex items-center focus:outline-none cursor-pointer {isLoaded ? 'transition-all duration-300' : ''} {enabled
-                    ? 'bg-accent/20 border border-accent/20'
-                    : 'bg-bg-secondary border border-border'}"
-                onclick={handleEnabledToggle}
+            <ToggleSwitch
+                checked={enabled}
+                onchange={handleEnabledToggle}
                 aria-label="Toggle Block Distractions"
-            >
-                <div
-                    class="w-4 h-4 rounded-full shadow-(--shadow-ambient)
-                           {isLoaded ? 'transition-all duration-300' : ''}
-                           {enabled
-                        ? 'bg-accent translate-x-5.5'
-                        : 'bg-text-tertiary translate-x-0'}"
-                ></div>
-            </button>
+                {isLoaded}
+            />
         </div>
 
         <!-- Strict Mode -->
@@ -217,22 +208,12 @@ function handleKeyPress(e: KeyboardEvent) {
                     >Keep block active outside focus sessions & break timers</span
                 >
             </div>
-            <button
-                type="button"
-                class="w-12 h-6 rounded-full p-1 relative flex items-center focus:outline-none cursor-pointer {isLoaded ? 'transition-all duration-300' : ''} {strictMode
-                    ? 'bg-accent/20 border border-accent/20'
-                    : 'bg-bg-secondary border border-border'}"
-                onclick={handleStrictModeToggle}
+            <ToggleSwitch
+                checked={strictMode}
+                onchange={handleStrictModeToggle}
                 aria-label="Toggle Strict Mode"
-            >
-                <div
-                    class="w-4 h-4 rounded-full shadow-(--shadow-ambient)
-                           {isLoaded ? 'transition-all duration-300' : ''}
-                           {strictMode
-                        ? 'bg-accent translate-x-5.5'
-                        : 'bg-text-tertiary translate-x-0'}"
-                ></div>
-            </button>
+                {isLoaded}
+            />
         </div>
 
         <!-- Bypass Duration -->

@@ -1,79 +1,96 @@
 :root {
-  /* Organic Studio - Shared Foundation (Light Mode) */
-  --bg-primary: #F9F6F0;    /* Paper */
-  --bg-secondary: #F1EDE4;  /* Clay / Surface */
-  --text-primary: #2D2B2A;  /* Ink */
-  --text-secondary: #4B4847;
-  --text-tertiary: #8C8885; /* Graphite / Muted */
-  
-  --surface: #F1EDE4;
-  --surface-raised: #F9F6F0;
-  --border: rgba(45, 43, 42, 0.1);
-  --border-strong: rgba(45, 43, 42, 0.2);
-  
-  --shadow-ambient: 4px 6px 12px rgba(45, 43, 42, 0.08), -4px -4px 10px rgba(255, 255, 255, 0.7);
-  --shadow-pressed: inset 3px 3px 6px rgba(45, 43, 42, 0.1), inset -2px -2px 4px rgba(255, 255, 255, 0.6);
-  
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-full: 9999px;
+    /* Organic Studio - Shared Foundation (Light Mode) */
+    --bg-primary: #f9f6f0; /* Paper */
+    --bg-secondary: #f1ede4; /* Clay / Surface */
+    --text-primary: #2d2b2a; /* Ink */
+    --text-secondary: #4b4847;
+    --text-tertiary: #8c8885; /* Graphite / Muted */
 
-  /* Theme Colors for Swatches */
-  --color-forest: #8A9A86;
-  --color-ocean: #7A90A4;
-  --color-sunset: #C17767;
+    --surface: #f1ede4;
+    --surface-raised: #f9f6f0;
+    --border: rgba(45, 43, 42, 0.1);
+    --border-strong: rgba(45, 43, 42, 0.2);
 
-  /* Default Theme (Forest) */
-  --accent: var(--color-forest);
-  --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
+    --shadow-ambient:
+        4px 6px 12px rgba(45, 43, 42, 0.08),
+        -4px -4px 10px rgba(255, 255, 255, 0.7);
+    --shadow-pressed:
+        inset 3px 3px 6px rgba(45, 43, 42, 0.1),
+        inset -2px -2px 4px rgba(255, 255, 255, 0.6);
 
-  /* Priority Colors */
-  --color-red: hsl(5, 75%, 62%);
-  --color-yellow: hsl(42, 85%, 55%);
-  --color-green: hsl(115, 55%, 48%);
+    --toggle-track-bg: #e5dfd4;
+    --toggle-knob-bg: var(--bg-primary);
+    --toggle-border: rgba(45, 43, 42, 0.2);
+    --toggle-knob-border: rgba(45, 43, 42, 0.08);
+
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-full: 9999px;
+
+    /* Theme Colors for Swatches */
+    --color-forest: #8a9a86;
+    --color-ocean: #7a90a4;
+    --color-sunset: #c17767;
+
+    /* Default Theme (Forest) */
+    --accent: var(--color-forest);
+    --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
+
+    /* Priority Colors */
+    --color-red: hsl(5, 75%, 62%);
+    --color-yellow: hsl(42, 85%, 55%);
+    --color-green: hsl(115, 55%, 48%);
 }
 
 [data-theme="forest"] {
-  --accent: var(--color-forest);
+    --accent: var(--color-forest);
 }
 
 [data-theme="ocean"] {
-  --accent: var(--color-ocean);
+    --accent: var(--color-ocean);
 }
 
 [data-theme="sunset"] {
-  --accent: var(--color-sunset);
+    --accent: var(--color-sunset);
 }
 
 [data-dark="true"] {
-  /* Organic Studio - Shared Foundation (Dark Mode) */
-  --bg-primary: #1A1817;    /* Espresso */
-  --bg-secondary: #262322;  /* Matte Dark Wood / Surface */
-  --text-primary: #EAE6E1;  /* Soft Parchment */
-  --text-secondary: #B8B2AC;
-  --text-tertiary: #8A8580; /* Faded Bark / Muted */
-  
-  --surface: #262322;
-  --surface-raised: #2D2A29;
-  --border: rgba(255, 255, 255, 0.05);
-  --border-strong: rgba(255, 255, 255, 0.1);
-  
-  --shadow-ambient: 4px 6px 12px rgba(0, 0, 0, 0.4), -2px -2px 8px rgba(255, 255, 255, 0.05);
-  --shadow-pressed: inset 4px 4px 8px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+    /* Organic Studio - Shared Foundation (Dark Mode) */
+    --bg-primary: #1a1817; /* Espresso */
+    --bg-secondary: #262322; /* Matte Dark Wood / Surface */
+    --text-primary: #eae6e1; /* Soft Parchment */
+    --text-secondary: #b8b2ac;
+    --text-tertiary: #8a8580; /* Faded Bark / Muted */
 
-  /* Dark Theme Accents (Vibrant/Fixed-Dim versions) */
-  --color-forest: #A3B18A;
-  --color-ocean: #93A8AC;
-  --color-sunset: #C17767;
+    --surface: #262322;
+    --surface-raised: #2d2a29;
+    --border: rgba(255, 255, 255, 0.05);
+    --border-strong: rgba(255, 255, 255, 0.1);
 
-  /* Dark Theme Priority Colors */
-  --color-red: hsl(5, 80%, 65%);
-  --color-yellow: hsl(42, 85%, 65%);
-  --color-green: hsl(115, 60%, 58%);
+    --shadow-ambient:
+        4px 6px 12px rgba(0, 0, 0, 0.4), -2px -2px 8px rgba(255, 255, 255, 0.05);
+    --shadow-pressed:
+        inset 4px 4px 8px rgba(0, 0, 0, 0.5),
+        inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+
+    --toggle-track-bg: #12100f;
+    --toggle-knob-bg: var(--surface-raised);
+    --toggle-border: rgba(255, 255, 255, 0.15);
+    --toggle-knob-border: rgba(255, 255, 255, 0.08);
+
+    /* Dark Theme Accents (Vibrant/Fixed-Dim versions) */
+    --color-forest: #a3b18a;
+    --color-ocean: #93a8ac;
+    --color-sunset: #c17767;
+
+    /* Dark Theme Priority Colors */
+    --color-red: hsl(5, 80%, 65%);
+    --color-yellow: hsl(42, 85%, 65%);
+    --color-green: hsl(115, 60%, 58%);
 }
 
 /* Base utility for dynamic accent softness */
 :root {
-  --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
+    --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
 }
