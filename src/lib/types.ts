@@ -51,6 +51,7 @@ export interface UserPreferences {
   fontFamily: FontFamily;
   lastActiveTab: TabType;
   moveHighPriorityToTop?: boolean;
+  showSkipButton?: boolean;
 }
 
 export type MessageType =

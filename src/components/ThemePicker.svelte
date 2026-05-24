@@ -179,6 +179,26 @@ function handleCustomColorChange(e: Event) {
     <div class="space-y-4">
         <span
             class="block text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1 mb-2"
+            >Timer Settings</span
+        >
+        <div
+            class="flex items-center justify-between p-4 bg-bg-primary rounded-2xl shadow-(--shadow-pressed)"
+        >
+            <div class="flex flex-col gap-0.5">
+                <span class="text-xs font-semibold text-text-primary">Show Skip Button</span>
+                <span class="text-[10px] text-text-tertiary">Allow skipping focus and break timers</span>
+            </div>
+            <ToggleSwitch
+                checked={preferences.showSkipButton ?? true}
+                onchange={(checked) => updatePrefs({ showSkipButton: checked })}
+                aria-label="Toggle Show Skip Button"
+            />
+        </div>
+    </div>
+
+    <div class="space-y-4">
+        <span
+            class="block text-[10px] font-bold uppercase tracking-[0.2em] text-text-tertiary px-1 mb-2"
             >Task Settings</span
         >
         <div

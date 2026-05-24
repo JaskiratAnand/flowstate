@@ -59,6 +59,7 @@ onMount(async () => {
       fontFamily: 'karla',
       lastActiveTab: 'timer',
       moveHighPriorityToTop: true,
+      showSkipButton: true,
     };
     updated = true;
   }
@@ -69,6 +70,10 @@ onMount(async () => {
   }
   if (prefs.moveHighPriorityToTop === undefined) {
     prefs.moveHighPriorityToTop = true;
+    updated = true;
+  }
+  if (prefs.showSkipButton === undefined) {
+    prefs.showSkipButton = true;
     updated = true;
   }
 

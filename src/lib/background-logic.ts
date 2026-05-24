@@ -128,10 +128,21 @@ export async function handleInstalled() {
       fontFamily: 'karla',
       lastActiveTab: 'timer',
       moveHighPriorityToTop: true,
+      showSkipButton: true,
     });
-  } else if (existingPrefs.moveHighPriorityToTop === undefined) {
-    existingPrefs.moveHighPriorityToTop = true;
-    await setStorageItem('USER_PREFERENCES', existingPrefs);
+  } else {
+    let modified = false;
+    if (existingPrefs.moveHighPriorityToTop === undefined) {
+      existingPrefs.moveHighPriorityToTop = true;
+      modified = true;
+    }
+    if (existingPrefs.showSkipButton === undefined) {
+      existingPrefs.showSkipButton = true;
+      modified = true;
+    }
+    if (modified) {
+      await setStorageItem('USER_PREFERENCES', existingPrefs);
+    }
   }
 
   const existingBlockingConfig = await getStorageItem('BLOCKING_CONFIG');

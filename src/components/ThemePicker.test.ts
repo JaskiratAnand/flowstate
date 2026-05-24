@@ -157,4 +157,22 @@ describe('ThemePicker Component', () => {
       expect(checkmark).toBeInTheDocument();
     });
   });
+
+  it('renders the "Show Skip Button" toggle and calls onUpdate/setStorageItem on toggle', async () => {
+    initialPrefs.showSkipButton = true;
+    const { getByLabelText } = render(ThemePicker, {
+      preferences: initialPrefs,
+      onUpdate: onUpdateMock,
+    });
+
+    const toggle = getByLabelText('Toggle Show Skip Button');
+    expect(toggle).toBeInTheDocument();
+
+    await fireEvent.click(toggle);
+    expect(onUpdateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        showSkipButton: false,
+      }),
+    );
+  });
 });

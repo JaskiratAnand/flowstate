@@ -181,6 +181,7 @@ describe('Background Logic', () => {
           fontFamily: 'karla',
           lastActiveTab: 'timer',
           moveHighPriorityToTop: true,
+          showSkipButton: true,
         },
       });
 
@@ -263,11 +264,12 @@ describe('Background Logic', () => {
         },
       });
 
-      // Ensure moveHighPriorityToTop is added to existing preferences if missing
+      // Ensure moveHighPriorityToTop and showSkipButton are added to existing preferences if missing
       expect(browser.storage.local.set).toHaveBeenCalledWith({
         [STORAGE_KEYS.USER_PREFERENCES]: {
           ...existingPrefs,
           moveHighPriorityToTop: true,
+          showSkipButton: true,
         },
       });
 

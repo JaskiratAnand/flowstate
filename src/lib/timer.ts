@@ -75,3 +75,29 @@ export function resetTimer(state: TimerState, config: TimerConfig): TimerState {
     remainingSeconds: seconds,
   };
 }
+
+export function skipTimer(state: TimerState, config: TimerConfig): TimerState {
+  if (state.sessionType === 'work') {
+    const nextIndexForBreak = state.completedSessions + 1;
+    const isLongBreak = nextIndexForBreak % 4 === 0;
+    const sessionType = isLongBreak ? 'long-break' : 'short-break';
+    const remainingSeconds = isLongBreak
+      ? config.longBreakDuration * 60
+      : config.shortBreakDuration * 60;
+    return {
+      ...state,
+      status: 'idle',
+      sessionType,
+      remainingSeconds,
+      expectedEndTime: undefined,
+    };
+  } else {
+    return {
+      ...state,
+      status: 'idle',
+      sessionType: 'work',
+      remainingSeconds: config.workDuration * 60,
+      expectedEndTime: undefined,
+    };
+  }
+}

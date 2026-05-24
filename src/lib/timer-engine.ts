@@ -1,4 +1,10 @@
-import { startTimer, pauseTimer, tickTimer, resetTimer } from './timer';
+import {
+  startTimer,
+  pauseTimer,
+  tickTimer,
+  resetTimer,
+  skipTimer,
+} from './timer';
 import type { TimerState, TimerConfig } from './types';
 
 export interface StoragePort {
@@ -71,15 +77,7 @@ export class TimerEngineImpl implements TimerEngine {
         await this.alarms.clearTick();
         break;
       case 'SKIP':
-        // Force end current session
-        const endState = {
-          ...state,
-          status: 'running' as const,
-          remainingSeconds: 0,
-          expectedEndTime: undefined,
-        };
-        nextState = tickTimer(endState, config);
-        nextState.expectedEndTime = undefined;
+        nextState = skipTimer(state, config);
         await this.alarms.clearTick();
         break;
     }

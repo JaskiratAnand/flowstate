@@ -13,6 +13,7 @@ vi.mock('wxt/browser', () => ({
     runtime: {
       id: 'mock-extension-id',
       getURL: (path: string) => `chrome-extension://mock-extension-id/${path}`,
+      sendMessage: vi.fn(),
     },
     storage: {
       local: {
@@ -113,5 +114,204 @@ describe('Timer Component', () => {
       expect(getByText('Active')).toBeInTheDocument();
     });
     expect(queryByText('Off')).not.toBeInTheDocument();
+  });
+
+  describe('Timer Skipping Behavior', () => {
+    let sendMessageMock: any;
+
+    beforeEach(() => {
+      sendMessageMock = vi.fn().mockResolvedValue(undefined);
+      vi.mocked(browser.runtime.sendMessage).mockImplementation(
+        sendMessageMock,
+      );
+    });
+
+    it('hides the skip button and renders an invisible layout placeholder if showSkipButton is false', async () => {
+      mockStorage['user_preferences'] = { showSkipButton: false };
+      mockStorage['timer_state'] = {
+        status: 'idle',
+        remainingSeconds: 1500,
+        sessionType: 'work',
+        completedSessions: 0,
+      };
+
+      const { queryByTitle, container } = render(Timer);
+
+      await waitFor(() => {
+        expect(browser.storage.local.get).toHaveBeenCalledWith(
+          'user_preferences',
+        );
+      });
+
+      expect(queryByTitle('Skip')).not.toBeInTheDocument();
+      const placeholder = container.querySelector('[aria-hidden="true"]');
+      expect(placeholder).toBeInTheDocument();
+      expect(placeholder).toHaveClass('invisible');
+      expect(placeholder).toHaveClass('pointer-events-none');
+    });
+
+    it('shows the skip button if showSkipButton is true or undefined', async () => {
+      mockStorage['user_preferences'] = { showSkipButton: true };
+      mockStorage['timer_state'] = {
+        status: 'idle',
+        remainingSeconds: 1500,
+        sessionType: 'work',
+        completedSessions: 0,
+      };
+
+      const { getByTitle } = render(Timer);
+
+      await waitFor(() => {
+        expect(browser.storage.local.get).toHaveBeenCalledWith(
+          'user_preferences',
+        );
+      });
+
+      expect(getByTitle('Skip')).toBeInTheDocument();
+    });
+
+    it('triggers skip immediately on click during breaks', async () => {
+      mockStorage['user_preferences'] = { showSkipButton: true };
+      mockStorage['timer_state'] = {
+        status: 'idle',
+        remainingSeconds: 300,
+        sessionType: 'short-break',
+        completedSessions: 0,
+      };
+
+      const { getByTitle } = render(Timer);
+
+      await waitFor(() => {
+        expect(browser.storage.local.get).toHaveBeenCalledWith('timer_state');
+      });
+
+      const skipBtn = getByTitle('Skip');
+      await fireEvent.click(skipBtn);
+
+      expect(sendMessageMock).toHaveBeenCalledWith({ type: 'SKIP_SESSION' });
+    });
+
+    it('does not skip on simple click during work session', async () => {
+      mockStorage['user_preferences'] = { showSkipButton: true };
+      mockStorage['timer_state'] = {
+        status: 'idle',
+        remainingSeconds: 1500,
+        sessionType: 'work',
+        completedSessions: 0,
+      };
+
+      const { getByTitle } = render(Timer);
+
+      await waitFor(() => {
+        expect(browser.storage.local.get).toHaveBeenCalledWith('timer_state');
+      });
+
+      const skipBtn = getByTitle('Skip');
+      await fireEvent.click(skipBtn);
+
+      expect(sendMessageMock).not.toHaveBeenCalled();
+    });
+
+    it('triggers skip after holding skip button for 1.5s during work session', async () => {
+      vi.useFakeTimers();
+      mockStorage['user_preferences'] = { showSkipButton: true };
+      mockStorage['timer_state'] = {
+        status: 'idle',
+        remainingSeconds: 1500,
+        sessionType: 'work',
+        completedSessions: 0,
+      };
+
+      const { getByTitle } = render(Timer);
+
+      await waitFor(() => {
+        expect(browser.storage.local.get).toHaveBeenCalledWith('timer_state');
+      });
+
+      const skipBtn = getByTitle('Skip');
+
+      // Start hold
+      await fireEvent.mouseDown(skipBtn);
+
+      // Fast-forward by 1s (should not trigger yet)
+      vi.advanceTimersByTime(1000);
+      expect(sendMessageMock).not.toHaveBeenCalled();
+
+      // Fast-forward by another 500ms (total 1.5s, should trigger)
+      vi.advanceTimersByTime(500);
+      expect(sendMessageMock).toHaveBeenCalledWith({ type: 'SKIP_SESSION' });
+
+      vi.useRealTimers();
+    });
+
+    it('resets progress and does not skip if pointer leaves or releases before 1.5s', async () => {
+      vi.useFakeTimers();
+      mockStorage['user_preferences'] = { showSkipButton: true };
+      mockStorage['timer_state'] = {
+        status: 'idle',
+        remainingSeconds: 1500,
+        sessionType: 'work',
+        completedSessions: 0,
+      };
+
+      const { getByTitle } = render(Timer);
+
+      await waitFor(() => {
+        expect(browser.storage.local.get).toHaveBeenCalledWith('timer_state');
+      });
+
+      const skipBtn = getByTitle('Skip');
+
+      // Hold and release early
+      await fireEvent.mouseDown(skipBtn);
+      vi.advanceTimersByTime(500);
+      await fireEvent.mouseUp(skipBtn);
+
+      vi.advanceTimersByTime(1500);
+      expect(sendMessageMock).not.toHaveBeenCalled();
+
+      // Hold and leave early
+      await fireEvent.mouseDown(skipBtn);
+      vi.advanceTimersByTime(500);
+      await fireEvent.mouseLeave(skipBtn);
+
+      vi.advanceTimersByTime(1500);
+      expect(sendMessageMock).not.toHaveBeenCalled();
+
+      vi.useRealTimers();
+    });
+
+    it('prevents double skipping when mouseup/click fires after long press completion', async () => {
+      vi.useFakeTimers();
+      mockStorage['user_preferences'] = { showSkipButton: true };
+      mockStorage['timer_state'] = {
+        status: 'idle',
+        remainingSeconds: 1500,
+        sessionType: 'work',
+        completedSessions: 0,
+      };
+
+      const { getByTitle } = render(Timer);
+
+      await waitFor(() => {
+        expect(browser.storage.local.get).toHaveBeenCalledWith('timer_state');
+      });
+
+      const skipBtn = getByTitle('Skip');
+
+      // Hold until skip triggers
+      await fireEvent.mouseDown(skipBtn);
+      vi.advanceTimersByTime(1500);
+      expect(sendMessageMock).toHaveBeenCalledTimes(1);
+
+      // Simulate mouseUp and click events following hold completion
+      await fireEvent.mouseUp(skipBtn);
+      await fireEvent.click(skipBtn);
+
+      // Verify skip was not called a second time
+      expect(sendMessageMock).toHaveBeenCalledTimes(1);
+
+      vi.useRealTimers();
+    });
   });
 });

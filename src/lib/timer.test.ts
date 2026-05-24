@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { startTimer, pauseTimer, tickTimer, resetTimer } from './timer';
+import {
+  startTimer,
+  pauseTimer,
+  tickTimer,
+  resetTimer,
+  skipTimer,
+} from './timer';
 import type { TimerState, TimerConfig } from './types';
 
 describe('Timer Logic', () => {
@@ -154,5 +160,71 @@ describe('Timer Logic', () => {
     expect(nextState.remainingSeconds).toBe(25 * 60);
     expect(nextState.sessionType).toBe('work');
     expect(nextState.completedSessions).toBe(2);
+  });
+
+  describe('skipTimer', () => {
+    it('skips a work session, transitions to short-break, and does NOT increment completedSessions', () => {
+      const state: TimerState = {
+        status: 'running',
+        remainingSeconds: 1000,
+        sessionType: 'work',
+        completedSessions: 0,
+      };
+
+      const nextState = skipTimer(state, config);
+
+      expect(nextState.status).toBe('idle');
+      expect(nextState.sessionType).toBe('short-break');
+      expect(nextState.completedSessions).toBe(0);
+      expect(nextState.remainingSeconds).toBe(5 * 60);
+    });
+
+    it('skips a work session when completedSessions = 3, transitioning to long-break', () => {
+      const state: TimerState = {
+        status: 'running',
+        remainingSeconds: 500,
+        sessionType: 'work',
+        completedSessions: 3,
+      };
+
+      const nextState = skipTimer(state, config);
+
+      expect(nextState.status).toBe('idle');
+      expect(nextState.sessionType).toBe('long-break');
+      expect(nextState.completedSessions).toBe(3);
+      expect(nextState.remainingSeconds).toBe(15 * 60);
+    });
+
+    it('skips a short-break session and transitions back to work', () => {
+      const state: TimerState = {
+        status: 'running',
+        remainingSeconds: 200,
+        sessionType: 'short-break',
+        completedSessions: 1,
+      };
+
+      const nextState = skipTimer(state, config);
+
+      expect(nextState.status).toBe('idle');
+      expect(nextState.sessionType).toBe('work');
+      expect(nextState.completedSessions).toBe(1);
+      expect(nextState.remainingSeconds).toBe(25 * 60);
+    });
+
+    it('skips a long-break session and transitions back to work', () => {
+      const state: TimerState = {
+        status: 'running',
+        remainingSeconds: 500,
+        sessionType: 'long-break',
+        completedSessions: 4,
+      };
+
+      const nextState = skipTimer(state, config);
+
+      expect(nextState.status).toBe('idle');
+      expect(nextState.sessionType).toBe('work');
+      expect(nextState.completedSessions).toBe(4);
+      expect(nextState.remainingSeconds).toBe(25 * 60);
+    });
   });
 });

@@ -3,9 +3,10 @@ import { onMount, onDestroy } from 'svelte';
 import { browser } from 'wxt/browser';
 import { getStorageItem, STORAGE_KEYS } from '../lib/storage';
 import { useTimer } from '../lib/timer-store.svelte';
-import type { TimerConfig } from '../lib/types';
+import type { TimerConfig, UserPreferences } from '../lib/types';
 import TimerConfigComp from './TimerConfig.svelte';
 import Icon from './Icon.svelte';
+import { playClickSound } from '../lib/audio';
 
 let { onOpenFocusShield = () => {} } = $props<{
   onOpenFocusShield?: () => void;
@@ -13,8 +14,65 @@ let { onOpenFocusShield = () => {} } = $props<{
 
 const timer = useTimer();
 let config = $state<TimerConfig | null>(null);
+let preferences = $state<UserPreferences | null>(null);
 let showConfig = $state(false);
 let blockingEnabled = $state(true);
+
+let showSkipButton = $derived(preferences?.showSkipButton ?? true);
+
+let holdProgress = $state(0);
+let holdStartTime = $state<number | null>(null);
+let holdInterval = $state<any>(null);
+
+function startHold(e: Event) {
+  if (timerState?.sessionType !== 'work') return;
+  e.preventDefault();
+  cancelHold();
+
+  holdStartTime = Date.now();
+  holdProgress = 0;
+
+  holdInterval = setInterval(() => {
+    if (!holdStartTime) return;
+    const elapsed = Date.now() - holdStartTime;
+    holdProgress = Math.min(100, (elapsed / 1500) * 100);
+
+    if (elapsed >= 1500) {
+      triggerSkip();
+    }
+  }, 30);
+}
+
+function cancelHold() {
+  if (holdInterval) {
+    clearInterval(holdInterval);
+    holdInterval = null;
+  }
+  holdStartTime = null;
+  holdProgress = 0;
+}
+
+let ignoreNextClick = false;
+
+function triggerSkip() {
+  cancelHold();
+  ignoreNextClick = true;
+  timer.skip();
+  playClickSound();
+}
+
+function handleSkipClick(e: Event) {
+  if (ignoreNextClick) {
+    ignoreNextClick = false;
+    e.preventDefault();
+    return;
+  }
+  if (timerState?.sessionType !== 'work') {
+    timer.skip();
+  } else {
+    e.preventDefault();
+  }
+}
 
 onMount(async () => {
   config = (await getStorageItem('TIMER_CONFIG')) || {
@@ -22,6 +80,8 @@ onMount(async () => {
     shortBreakDuration: 5,
     longBreakDuration: 15,
   };
+
+  preferences = await getStorageItem('USER_PREFERENCES');
 
   const blockingConfig = await getStorageItem('BLOCKING_CONFIG');
   blockingEnabled = blockingConfig ? blockingConfig.enabled : true;
@@ -31,6 +91,7 @@ onMount(async () => {
 
 onDestroy(() => {
   browser.storage.onChanged.removeListener(handleStorageChange);
+  cancelHold();
 });
 
 function handleStorageChange(changes: Record<string, any>, areaName: string) {
@@ -38,6 +99,10 @@ function handleStorageChange(changes: Record<string, any>, areaName: string) {
 
   if (changes[STORAGE_KEYS.TIMER_CONFIG]) {
     config = changes[STORAGE_KEYS.TIMER_CONFIG].newValue;
+  }
+
+  if (changes[STORAGE_KEYS.USER_PREFERENCES]) {
+    preferences = changes[STORAGE_KEYS.USER_PREFERENCES].newValue;
   }
 
   if (changes[STORAGE_KEYS.BLOCKING_CONFIG]) {
@@ -205,13 +270,41 @@ function handleDialClick() {
             {/if}
         </button>
 
+        {#if showSkipButton}
         <button
-            class="p-4 rounded-full bg-surface shadow-(--shadow-ambient) text-text-tertiary hover:text-text-primary transition-all active:shadow-(--shadow-pressed) active:scale-95"
-            onclick={() => timer.skip()}
+            class="relative p-4 rounded-full bg-surface shadow-(--shadow-ambient) text-text-tertiary hover:text-text-primary transition-all active:shadow-(--shadow-pressed) active:scale-95"
+            onmousedown={startHold}
+            onmouseup={cancelHold}
+            onmouseleave={cancelHold}
+            ontouchstart={startHold}
+            ontouchend={cancelHold}
+            onclick={handleSkipClick}
             title="Skip"
         >
-            <Icon name="skip" class="w-5 h-5" />
+            {#if timerState?.sessionType === 'work' && holdProgress > 0}
+                <svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 52 52">
+                    <circle
+                        cx="26"
+                        cy="26"
+                        r="23"
+                        fill="transparent"
+                        stroke="var(--accent)"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-dasharray="144.5"
+                        stroke-dashoffset={144.5 - (144.5 * holdProgress) / 100}
+                        class="transition-all duration-75 ease-linear"
+                    />
+                </svg>
+            {/if}
+            <Icon name="skip" class="w-5 h-5 z-10" />
         </button>
+        {:else}
+        <!-- Invisible placeholder to keep Reset and Play/Pause buttons in their exact positions -->
+        <div class="p-4 rounded-full invisible pointer-events-none" aria-hidden="true">
+            <Icon name="skip" class="w-5 h-5" />
+        </div>
+        {/if}
     </div>
 
     <!-- Settings Expandable -->
