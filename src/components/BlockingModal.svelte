@@ -160,7 +160,7 @@ function handleKeyPress(e: KeyboardEvent) {
 </script>
 
 <div
-    class="absolute inset-0 z-50 bg-bg-primary p-6 flex flex-col overflow-y-auto animate-in fade-in duration-300"
+    class="absolute inset-0 z-50 bg-bg-primary p-6 flex flex-col overflow-y-auto scrollbar-none animate-in fade-in duration-300"
 >
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
