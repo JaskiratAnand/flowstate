@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { generateDynamicRules, getCleanDomain } from './blocking';
 import type { BlockingConfig, TimerState, BypassItem } from './types';
 
@@ -88,6 +88,46 @@ describe('Blocking Engine - Dynamic Rules Generator', () => {
     expect(rules.length).toBe(3);
   });
 
+  describe('Pro Version Enforcement', () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    it('forces blocklist mode when WXT_PRO_VERSION is not true and mode is allowlist', () => {
+      vi.stubEnv('WXT_PRO_VERSION', 'false');
+      const config: BlockingConfig = {
+        ...defaultBlockingConfig,
+        mode: 'allowlist',
+      };
+      const rules = generateDynamicRules(
+        config,
+        defaultTimerState,
+        emptyBypasses,
+      );
+      // Even though mode is allowlist, it should fallback to blocklist and block the 3 sites in defaultBlockingConfig
+      expect(rules.length).toBe(3);
+      expect(rules[0].condition.regexFilter).toBe(
+        '^https?://(?:[^/]*\\.)?youtube\\.com(?:/.*)?$',
+      );
+    });
+
+    it('allows allowlist mode when WXT_PRO_VERSION is true', () => {
+      vi.stubEnv('WXT_PRO_VERSION', 'true');
+      const config: BlockingConfig = {
+        ...defaultBlockingConfig,
+        mode: 'allowlist',
+      };
+      const rules = generateDynamicRules(
+        config,
+        defaultTimerState,
+        emptyBypasses,
+      );
+      // Should generate 1 rule for allowlist
+      expect(rules.length).toBe(1);
+      expect(rules[0].condition.regexFilter).toBe('^https?://.*$');
+    });
+  });
+
   describe('Blocklist Mode', () => {
     it('generates redirect rules for all non-bypassed blocked sites', () => {
       const rules = generateDynamicRules(
@@ -164,6 +204,14 @@ describe('Blocking Engine - Dynamic Rules Generator', () => {
   });
 
   describe('Allowlist Mode', () => {
+    beforeEach(() => {
+      vi.stubEnv('WXT_PRO_VERSION', 'true');
+    });
+
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
     it('generates a single wildcard redirect rule with allowed sites excluded', () => {
       const config: BlockingConfig = {
         ...defaultBlockingConfig,

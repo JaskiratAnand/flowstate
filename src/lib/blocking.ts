@@ -65,8 +65,12 @@ export function generateDynamicRules(
     return [];
   }
 
-  // 2. Generate rules based on mode
-  if (config.mode === 'blocklist') {
+  // 2. Determine effective mode based on Pro status
+  const isPro = import.meta.env.WXT_PRO_VERSION === 'true';
+  const effectiveMode = isPro ? config.mode : 'blocklist';
+
+  // 3. Generate rules based on effective mode
+  if (effectiveMode === 'blocklist') {
     const rules: any[] = [];
     const nonBypassedSites = config.blockedSites.filter(
       (site) => !isDomainBypassed(site, bypassList),
