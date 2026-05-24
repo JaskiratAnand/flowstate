@@ -17,11 +17,12 @@ describe('WxtAlarmAdapter', () => {
     vi.clearAllMocks();
   });
 
-  it('scheduleTick creates a browser alarm named pomodoro-tick with a 1-second period', async () => {
+  it('scheduleTick creates a browser alarm named pomodoro-tick with the expected endTime', async () => {
     const adapter = new WxtAlarmAdapter();
-    await adapter.scheduleTick();
+    const expectedEndTime = 123456789;
+    await adapter.scheduleTick(expectedEndTime);
     expect(browser.alarms.create).toHaveBeenCalledWith('pomodoro-tick', {
-      periodInMinutes: 1 / 60,
+      when: expectedEndTime,
     });
   });
 

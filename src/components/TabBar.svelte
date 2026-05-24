@@ -1,8 +1,10 @@
 <script lang="ts">
 import type { TabType } from '../lib/types';
 
-export let activeTab: TabType;
-export let onTabChange: (tab: TabType) => void;
+let { activeTab, onTabChange } = $props<{
+  activeTab: TabType;
+  onTabChange: (tab: TabType) => void;
+}>();
 
 const tabs: { id: TabType; label: string; icon: string }[] = [
   {
@@ -28,11 +30,11 @@ const tabs: { id: TabType; label: string; icon: string }[] = [
 >
     {#each tabs as tab}
         <button
-            class="w-14 h-14 flex items-center justify-center rounded-full transition-all pointer-events-auto
+            class="w-14 h-14 flex items-center justify-center rounded-full transition-all pointer-events-auto cursor-pointer
              {activeTab === tab.id
                 ? 'bg-surface text-accent shadow-(--shadow-ambient)'
                 : 'text-text-tertiary hover:text-text-primary hover:bg-surface/50'}"
-            on:click={() => onTabChange(tab.id)}
+            onclick={() => onTabChange(tab.id)}
             aria-label={tab.label}
         >
             <svg

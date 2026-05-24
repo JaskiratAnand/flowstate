@@ -4,7 +4,7 @@ import { browser } from 'wxt/browser';
 import { getStorageItem, STORAGE_KEYS } from '../lib/storage';
 import type { Stats } from '../lib/types';
 
-let stats: Stats | null = null;
+let stats = $state<Stats | null>(null);
 
 onMount(async () => {
   stats = await getStorageItem('STATS');

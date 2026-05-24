@@ -1,9 +1,9 @@
-import { writable, type Readable } from 'svelte/store';
 import { browser } from 'wxt/browser';
 import { getStorageItem, STORAGE_KEYS } from './storage';
 import type { TimerState, MessageType } from './types';
 
-export interface TimerStore extends Readable<TimerState | null> {
+export interface TimerStore {
+  readonly state: TimerState | null;
   start(): Promise<void>;
   pause(): Promise<void>;
   reset(): Promise<void>;
@@ -11,18 +11,18 @@ export interface TimerStore extends Readable<TimerState | null> {
 }
 
 export function useTimer(): TimerStore {
-  const { subscribe, set } = writable<TimerState | null>(null);
+  let timerState = $state<TimerState | null>(null);
 
   // Initialize
   getStorageItem('TIMER_STATE').then((state) => {
-    if (state) set(state);
+    if (state) timerState = state;
   });
 
   // Listen for changes
   browser.storage.local.onChanged.addListener((changes) => {
     const timerChange = changes[STORAGE_KEYS.TIMER_STATE];
     if (timerChange) {
-      set(timerChange.newValue as TimerState);
+      timerState = timerChange.newValue as TimerState;
     }
   });
 
@@ -31,7 +31,9 @@ export function useTimer(): TimerStore {
   };
 
   return {
-    subscribe,
+    get state() {
+      return timerState;
+    },
     start: () => sendMessage('START_TIMER'),
     pause: () => sendMessage('PAUSE_TIMER'),
     reset: () => sendMessage('RESET_TIMER'),

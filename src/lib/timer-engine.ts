@@ -8,7 +8,7 @@ export interface StoragePort {
 }
 
 export interface AlarmPort {
-  scheduleTick(): Promise<void>;
+  scheduleTick(expectedEndTime: number): Promise<void>;
   clearTick(): Promise<void>;
 }
 
@@ -42,21 +42,43 @@ export class TimerEngineImpl implements TimerEngine {
       case 'START':
         nextState = startTimer(state, config);
         if (nextState.status === 'running') {
-          await this.alarms.scheduleTick();
+          const expectedEndTime =
+            Date.now() + nextState.remainingSeconds * 1000;
+          nextState.expectedEndTime = expectedEndTime;
+          await this.alarms.scheduleTick(expectedEndTime);
         }
         break;
       case 'PAUSE':
-        nextState = pauseTimer(state);
+        if (state.status === 'running' && state.expectedEndTime) {
+          const remaining = Math.max(
+            0,
+            Math.ceil((state.expectedEndTime - Date.now()) / 1000),
+          );
+          nextState = {
+            ...state,
+            status: 'paused',
+            remainingSeconds: remaining,
+            expectedEndTime: undefined,
+          };
+        } else {
+          nextState = pauseTimer(state);
+        }
         await this.alarms.clearTick();
         break;
       case 'RESET':
         nextState = resetTimer(state, config);
+        nextState.expectedEndTime = undefined;
         await this.alarms.clearTick();
         break;
       case 'SKIP':
         // Force end current session
-        const endState = { ...state, remainingSeconds: 0 };
+        const endState = {
+          ...state,
+          remainingSeconds: 0,
+          expectedEndTime: undefined,
+        };
         nextState = tickTimer(endState, config);
+        nextState.expectedEndTime = undefined;
         await this.alarms.clearTick();
         break;
     }
@@ -90,20 +112,24 @@ export class TimerEngineImpl implements TimerEngine {
 
     if (!state || !config || state.status !== 'running') return;
 
-    const nextState = tickTimer(state, config);
+    const endState = {
+      ...state,
+      remainingSeconds: 0,
+      expectedEndTime: undefined,
+    };
+    const nextState = tickTimer(endState, config);
+    nextState.expectedEndTime = undefined;
 
-    if (state.remainingSeconds === 0) {
-      await this.alarms.clearTick();
-      await this.feedback.playChime();
+    await this.alarms.clearTick();
+    await this.feedback.playChime();
 
-      const title =
-        state.sessionType === 'work' ? 'Work Session Complete!' : 'Break Over!';
-      const message =
-        state.sessionType === 'work'
-          ? 'Time for a break.'
-          : 'Time to get back to work.';
-      await this.feedback.notify(title, message);
-    }
+    const title =
+      state.sessionType === 'work' ? 'Work Session Complete!' : 'Break Over!';
+    const message =
+      state.sessionType === 'work'
+        ? 'Time for a break.'
+        : 'Time to get back to work.';
+    await this.feedback.notify(title, message);
 
     await this.storage.setState(nextState);
   }

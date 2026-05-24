@@ -2,16 +2,19 @@
 import { onMount, onDestroy } from 'svelte';
 import { browser } from 'wxt/browser';
 import { getStorageItem, STORAGE_KEYS } from '../lib/storage';
-import { useTimer } from '../lib/timer-store';
+import { useTimer } from '../lib/timer-store.svelte';
 import type { TimerConfig } from '../lib/types';
 import TimerConfigComp from './TimerConfig.svelte';
+import Icon from './Icon.svelte';
 
-export let onOpenFocusShield: () => void = () => {};
+let { onOpenFocusShield = () => {} } = $props<{
+  onOpenFocusShield?: () => void;
+}>();
 
 const timer = useTimer();
-let config: TimerConfig | null = null;
-let showConfig = false;
-let blockingEnabled = true;
+let config = $state<TimerConfig | null>(null);
+let showConfig = $state(false);
+let blockingEnabled = $state(true);
 
 onMount(async () => {
   config = (await getStorageItem('TIMER_CONFIG')) || {
@@ -49,31 +52,54 @@ function formatTime(seconds: number): string {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
-$: state = $timer;
+let timerState = $derived(timer.state);
 
-$: label =
-  state?.sessionType === 'work'
+let label = $derived(
+  timerState?.sessionType === 'work'
     ? 'Focus'
-    : state?.sessionType === 'short-break'
+    : timerState?.sessionType === 'short-break'
       ? 'Short Break'
-      : 'Long Break';
+      : 'Long Break',
+);
 
-$: totalSeconds = config
-  ? (state?.sessionType === 'work'
-      ? config.workDuration
-      : state?.sessionType === 'short-break'
-        ? config.shortBreakDuration
-        : config.longBreakDuration) * 60
-  : 25 * 60;
+let totalSeconds = $derived(
+  config
+    ? (timerState?.sessionType === 'work'
+        ? config.workDuration
+        : timerState?.sessionType === 'short-break'
+          ? config.shortBreakDuration
+          : config.longBreakDuration) * 60
+    : 25 * 60,
+);
 
-$: progress = state
-  ? Math.max(0, Math.min(1, 1 - state.remainingSeconds / totalSeconds))
-  : 0;
-$: dashArray = 2 * Math.PI * 106; // radius = 106
-$: dashOffset = dashArray * (1 - progress);
+// Local visual timer countdown emulation
+let displaySeconds = $state(25 * 60);
+
+$effect(() => {
+  const s = timerState;
+  if (s?.status === 'running' && s.expectedEndTime) {
+    const update = () => {
+      displaySeconds = Math.max(
+        0,
+        Math.ceil((s.expectedEndTime! - Date.now()) / 1000),
+      );
+    };
+    update();
+    const interval = setInterval(update, 200);
+    return () => clearInterval(interval);
+  } else {
+    displaySeconds = s ? s.remainingSeconds : 25 * 60;
+  }
+});
+
+let progress = $derived(
+  timerState ? Math.max(0, Math.min(1, 1 - displaySeconds / totalSeconds)) : 0,
+);
+let dashArray = 2 * Math.PI * 106; // radius = 106
+let dashOffset = $derived(dashArray * (1 - progress));
 
 function handleDialClick() {
-  if (state?.status === 'running') {
+  if (timerState?.status === 'running') {
     timer.pause();
   } else {
     timer.start();
@@ -95,11 +121,11 @@ function handleDialClick() {
     <main class="flex flex-col items-center justify-center relative">
         <button
             class="relative w-55 h-55 rounded-full bg-surface flex items-center justify-center transition-all duration-300 group select-none active:scale-[0.98]
-             {state?.status === 'running'
+             {timerState?.status === 'running'
                 ? 'shadow-(--shadow-ambient)'
                 : 'shadow-(--shadow-pressed)'}"
-            on:click={handleDialClick}
-            aria-label={state?.status === "running" ? "Pause" : "Start"}
+            onclick={handleDialClick}
+            aria-label={timerState?.status === "running" ? "Pause" : "Start"}
         >
             <!-- SVG Progress Ring -->
             <svg
@@ -126,7 +152,7 @@ function handleDialClick() {
                     stroke-width="4"
                     stroke-linecap="round"
                     style="stroke-dasharray: {dashArray}; stroke-dashoffset: {dashOffset};"
-                    class="transition-all duration-1000 ease-linear {state?.status ===
+                    class="transition-all duration-1000 ease-linear {timerState?.status ===
                     'running'
                         ? 'opacity-100'
                         : 'opacity-0'}"
@@ -136,11 +162,11 @@ function handleDialClick() {
             <!-- Timer Display -->
             <div
                 class="timer-text text-text-primary text-[56px] font-light tracking-tight tabular-nums transition-opacity duration-300
-                  {state?.status === 'paused'
+                  {timerState?.status === 'paused'
                     ? 'opacity-50 animate-pulse'
                     : 'opacity-100'}"
             >
-                {state ? formatTime(state.remainingSeconds) : "25:00"}
+                {timerState ? formatTime(displaySeconds) : "25:00"}
             </div>
         </button>
     </main>
@@ -150,7 +176,7 @@ function handleDialClick() {
         {#each Array(4) as _, i}
             <div
                 class="w-3 h-3 rounded-full transition-all duration-500
-               {(state?.completedSessions || 0) % 4 > i
+               {(timerState?.completedSessions || 0) % 4 > i
                     ? 'bg-accent shadow-[0_0_12px_var(--accent-soft)] scale-110'
                     : 'bg-bg-secondary shadow-(--shadow-pressed)'}"
             ></div>
@@ -161,73 +187,30 @@ function handleDialClick() {
     <div class="flex items-center gap-8 mb-10">
         <button
             class="p-4 rounded-full bg-surface shadow-(--shadow-ambient) text-text-tertiary hover:text-text-primary transition-all active:shadow-(--shadow-pressed) active:scale-95"
-            on:click={() => timer.reset()}
+            onclick={() => timer.reset()}
             title="Reset"
         >
-            <svg
-                class="w-5 h-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                <path d="M3 3v5h5" />
-            </svg>
+            <Icon name="reset" class="w-5 h-5" />
         </button>
 
         <button
             class="p-5 rounded-full bg-surface shadow-(--shadow-ambient) text-accent transition-all active:shadow-(--shadow-pressed) active:scale-95"
-            on:click={handleDialClick}
-            title={state?.status === "running" ? "Pause" : "Start"}
+            onclick={handleDialClick}
+            title={timerState?.status === "running" ? "Pause" : "Start"}
         >
-            {#if state?.status === "running"}
-                <svg
-                    class="w-6 h-6"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <rect x="6" y="4" width="3" height="16" />
-                    <rect x="15" y="4" width="3" height="16" />
-                </svg>
+            {#if timerState?.status === "running"}
+                <Icon name="pause" class="w-6 h-6" />
             {:else}
-                <svg
-                    class="w-6 h-6 translate-x-0.5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <polygon points="5 3 19 12 5 21 5 3" />
-                </svg>
+                <Icon name="play" class="w-6 h-6 translate-x-0.5" />
             {/if}
         </button>
 
         <button
             class="p-4 rounded-full bg-surface shadow-(--shadow-ambient) text-text-tertiary hover:text-text-primary transition-all active:shadow-(--shadow-pressed) active:scale-95"
-            on:click={() => timer.skip()}
+            onclick={() => timer.skip()}
             title="Skip"
         >
-            <svg
-                class="w-5 h-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <path d="M5 4l10 8-10 8V4z" />
-                <line x1="19" y1="5" x2="19" y2="19" />
-            </svg>
+            <Icon name="skip" class="w-5 h-5" />
         </button>
     </div>
 
@@ -235,24 +218,12 @@ function handleDialClick() {
     <div class="w-full">
         <button
             class="w-full py-4 px-6 flex items-center justify-between rounded-2xl bg-surface shadow-(--shadow-ambient) hover:bg-bg-primary transition-all active:shadow-(--shadow-pressed)"
-            on:click={() => (showConfig = !showConfig)}
+            onclick={() => (showConfig = !showConfig)}
         >
             <span class="text-sm font-semibold text-text-secondary"
                 >Adjust Durations</span
             >
-            <svg
-                class="w-4 h-4 text-text-tertiary transition-transform duration-300 {showConfig
-                    ? 'rotate-180'
-                    : ''}"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <path d="m6 9 6 6 6-6" />
-            </svg>
+            <Icon name="chevron-down" class="w-4 h-4 text-text-tertiary transition-transform duration-300 {showConfig ? 'rotate-180' : ''}" />
         </button>
 
         {#if showConfig && config}
@@ -268,21 +239,10 @@ function handleDialClick() {
     <button
         type="button"
         class="w-full mt-4 py-4 px-6 flex items-center justify-between rounded-2xl bg-surface shadow-(--shadow-ambient) hover:bg-bg-primary transition-all active:shadow-(--shadow-pressed) select-none"
-        on:click={onOpenFocusShield}
+        onclick={onOpenFocusShield}
     >
         <div class="flex items-center gap-3">
-            <svg
-                class="w-5 h-5 text-accent"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-            >
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
+            <Icon name="shield" class="w-5 h-5 text-accent" />
             <span class="text-sm font-semibold text-text-secondary">Focus Shield</span>
         </div>
         <div class="flex items-center gap-2">
@@ -292,19 +252,7 @@ function handleDialClick() {
             >
                 {blockingEnabled ? 'Active' : 'Off'}
             </span>
-            <svg
-                class="w-4 h-4 text-text-tertiary"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2.5"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 5l7 7-7 7"
-                />
-            </svg>
+            <Icon name="chevron-right" class="w-4 h-4 text-text-tertiary" />
         </div>
     </button>
 </div>

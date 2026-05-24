@@ -1,15 +1,23 @@
 <script lang="ts">
 import type { Task, PriorityLevel } from '../lib/types';
 import { cyclePriority } from '../lib/tasks';
+import Icon from './Icon.svelte';
 
-export let task: Task;
-export let onToggle: (id: string) => void;
-export let onDelete: (id: string) => void;
-export let onEdit: (id: string, text: string) => void;
-export let onPriorityChange: (id: string, priority: PriorityLevel) => void;
+let { task, onToggle, onDelete, onEdit, onPriorityChange } = $props<{
+  task: Task;
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
+  onEdit: (id: string, text: string) => void;
+  onPriorityChange: (id: string, priority: PriorityLevel) => void;
+}>();
 
-let isEditing = false;
-let editText = task.text;
+let isEditing = $state(false);
+let editText = $state('');
+
+// Keep editText in sync if task text changes from outside (e.g. archiving/loading)
+$effect(() => {
+  editText = task.text;
+});
 
 function handleBlur() {
   isEditing = false;
@@ -38,10 +46,11 @@ function handlePriorityClick() {
   onPriorityChange(task.id, nextPriority);
 }
 
-$: priorityLabel =
+let priorityLabel = $derived(
   task.priority && task.priority !== 'none'
     ? `Priority: ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}`
-    : 'No Priority';
+    : 'No Priority',
+);
 </script>
 
 <div
@@ -49,24 +58,14 @@ $: priorityLabel =
 >
     <!-- Tactile Checkbox -->
     <button
-        class="w-6 h-6 rounded-full transition-all flex items-center justify-center shrink-0 {task.completed
+        class="w-6 h-6 rounded-full transition-all flex items-center justify-center shrink-0 cursor-pointer {task.completed
             ? 'bg-accent text-white shadow-(--shadow-ambient)'
             : 'bg-bg-primary shadow-(--shadow-pressed)'}"
-        on:click={() => onToggle(task.id)}
+        onclick={() => onToggle(task.id)}
         aria-label={task.completed ? "Mark incomplete" : "Mark complete"}
     >
         {#if task.completed}
-            <svg
-                class="w-3.5 h-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="4"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <polyline points="20 6 9 17 4 12" />
-            </svg>
+            <Icon name="check" class="w-3.5 h-3.5" />
         {/if}
     </button>
 
@@ -76,7 +75,7 @@ $: priorityLabel =
         class="priority-indicator {task.priority || 'none'} {task.completed
             ? 'completed'
             : ''}"
-        on:click={handlePriorityClick}
+        onclick={handlePriorityClick}
         title={priorityLabel}
         aria-label={priorityLabel}
         disabled={task.completed}
@@ -87,8 +86,8 @@ $: priorityLabel =
             <input
                 type="text"
                 bind:value={editText}
-                on:blur={handleBlur}
-                on:keydown={handleKeyDown}
+                onblur={handleBlur}
+                onkeydown={handleKeyDown}
                 use:focus
                 class="w-full bg-transparent border-none p-0 focus:ring-0 text-[15px] font-semibold text-text-primary"
             />
@@ -98,10 +97,10 @@ $: priorityLabel =
                     class="text-[15px] font-semibold leading-snug transition-all cursor-text {task.completed
                         ? 'opacity-40 line-through'
                         : 'text-text-primary'}"
-                    on:dblclick={() => (isEditing = true)}
+                    ondblclick={() => (isEditing = true)}
                     role="button"
                     tabindex="0"
-                    on:keydown={(e) => e.key === "Enter" && (isEditing = true)}
+                    onkeydown={(e) => e.key === "Enter" && (isEditing = true)}
                     aria-label="Double click to edit task"
                 >
                     {task.text}
@@ -120,21 +119,11 @@ $: priorityLabel =
     </div>
 
     <button
-        on:click={() => onDelete(task.id)}
-        class="opacity-0 group-hover:opacity-100 p-2 text-text-tertiary hover:text-accent transition-all active:scale-90"
+        onclick={() => onDelete(task.id)}
+        class="opacity-0 group-hover:opacity-100 p-2 text-text-tertiary hover:text-accent transition-all active:scale-90 cursor-pointer"
         title="Delete task"
     >
-        <svg
-            class="w-4.5 h-4.5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-        >
-            <path d="M18 6 6 18M6 6l12 12" />
-        </svg>
+        <Icon name="trash" class="w-4.5 h-4.5" />
     </button>
 </div>
 

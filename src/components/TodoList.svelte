@@ -8,13 +8,14 @@ import { incrementTasksCompleted } from '../lib/stats';
 import type { Task, PriorityLevel } from '../lib/types';
 import { sortTasks } from '../lib/tasks';
 import TodoItem from './TodoItem.svelte';
+import Icon from './Icon.svelte';
 
-let items: Task[] = [];
-let newTaskText = '';
-let newTaskCategory = 'Work';
-let newTaskPriority: PriorityLevel = 'none';
-let moveHighPriorityToTop = true;
-let lastValidItems: Task[] = [];
+let items = $state<Task[]>([]);
+let newTaskText = $state('');
+let newTaskCategory = $state('Work');
+let newTaskPriority = $state<PriorityLevel>('none');
+let moveHighPriorityToTop = $state(true);
+let lastValidItems = $state<Task[]>([]);
 const pendingSortTaskIds = new Set<string>();
 
 onDestroy(() => {
@@ -36,7 +37,7 @@ onMount(async () => {
 });
 
 async function sync() {
-  await setStorageItem('TASKS', items);
+  await setStorageItem('TASKS', $state.snapshot(items));
 }
 
 async function addTask() {
@@ -203,37 +204,26 @@ const flipDurationMs = 600;
                 type="text"
                 bind:value={newTaskText}
                 placeholder="Plant a seed..."
-                on:keydown={(e) => e.key === "Enter" && addTask()}
+                onkeydown={(e) => e.key === "Enter" && addTask()}
                 class="w-full bg-surface shadow-(--shadow-pressed) rounded-2xl px-6 py-4.5 text-sm font-semibold text-text-primary outline-none transition-all placeholder:text-text-tertiary placeholder:font-normal"
             />
             <button
-                on:click={addTask}
-                class="absolute right-3 top-1/2 -translate-y-1/2 bg-surface shadow-(--shadow-ambient) text-accent w-10 h-10 rounded-xl flex items-center justify-center active:shadow-(--shadow-pressed) active:scale-95 transition-all"
+                onclick={addTask}
+                class="absolute right-3 top-1/2 -translate-y-1/2 bg-surface shadow-(--shadow-ambient) text-accent w-10 h-10 rounded-xl flex items-center justify-center active:shadow-(--shadow-pressed) active:scale-95 transition-all cursor-pointer"
                 aria-label="Add task"
             >
-                <svg
-                    class="w-5 h-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
+                <Icon name="plus" class="w-5 h-5" />
             </button>
         </div>
 
         <div class="flex gap-3 px-1 overflow-x-auto scrollbar-none">
             {#each ["Work", "Personal", "Study"] as cat}
                 <button
-                    class="text-[10px] font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-full transition-all
+                    class="text-[10px] font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-full transition-all cursor-pointer
                   {newTaskCategory === cat
                         ? 'bg-accent text-white shadow-(--shadow-ambient)'
                         : 'bg-surface shadow-(--shadow-ambient) text-text-tertiary hover:text-text-secondary'}"
-                    on:click={() => (newTaskCategory = cat)}
+                    onclick={() => (newTaskCategory = cat)}
                 >
                     {cat}
                 </button>
@@ -245,16 +235,16 @@ const flipDurationMs = 600;
     <div
         class="flex-1 overflow-y-auto space-y-5 min-h-25 scrollbar-none pb-12"
         use:dndzone={{ items, flipDurationMs }}
-        on:consider={handleDndConsider}
-        on:finalize={handleDndFinalize}
+        onconsider={handleDndConsider}
+        onfinalize={handleDndFinalize}
         role="list"
     >
         {#each items as item (item.id)}
             <div
                 class="outline-none"
                 animate:flip={{ duration: flipDurationMs }}
-                on:mouseleave={() => handleMouseLeave(item.id)}
-                on:focusout={(e) => handleFocusOut(e, item.id)}
+                onmouseleave={() => handleMouseLeave(item.id)}
+                onfocusout={(e) => handleFocusOut(e, item.id)}
                 role="listitem"
             >
                 <TodoItem
@@ -269,19 +259,7 @@ const flipDurationMs = 600;
             <div
                 class="flex flex-col items-center justify-center py-20 text-center opacity-40"
             >
-                <svg
-                    class="w-16 h-16 mb-4 text-text-tertiary"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path
-                        d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
-                    />
-                </svg>
+                <Icon name="sun" class="w-16 h-16 mb-4 text-text-tertiary" />
                 <p class="text-sm font-medium text-text-tertiary">
                     No focus sessions yet today.<br />Plant a seed.
                 </p>
@@ -289,5 +267,3 @@ const flipDurationMs = 600;
         {/each}
     </div>
 </div>
-
-

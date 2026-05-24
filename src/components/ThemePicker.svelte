@@ -6,11 +6,15 @@ import type {
   FontFamily,
 } from '../lib/types';
 import { setStorageItem } from '../lib/storage';
+import Icon from './Icon.svelte';
+import ToggleSwitch from './ToggleSwitch.svelte';
 
 const isPro = import.meta.env.WXT_PRO_VERSION === 'true';
 
-export let preferences: UserPreferences;
-export let onUpdate: (prefs: UserPreferences) => void;
+let { preferences, onUpdate } = $props<{
+  preferences: UserPreferences;
+  onUpdate: (prefs: UserPreferences) => void;
+}>();
 
 const themes: { id: Theme; var: string; label: string }[] = [
   { id: 'forest', var: 'var(--color-forest)', label: 'Forest' },
@@ -71,11 +75,11 @@ function handleCustomColorChange(e: Event) {
         >
             {#each modes as mode}
                 <button
-                    class="flex-1 py-2.5 flex items-center justify-center gap-2 rounded-xl text-xs font-semibold transition-all {preferences.colorScheme ===
+                    class="flex-1 py-2.5 flex items-center justify-center gap-2 rounded-xl text-xs font-semibold transition-all cursor-pointer {preferences.colorScheme ===
                     mode.id
                         ? 'bg-surface text-text-primary shadow-(--shadow-ambient)'
                         : 'text-text-tertiary hover:text-text-secondary'}"
-                    on:click={() => updatePrefs({ colorScheme: mode.id })}
+                    onclick={() => updatePrefs({ colorScheme: mode.id })}
                 >
                     <span class="text-sm">{mode.icon}</span>
                     <span>{mode.label}</span>
@@ -92,12 +96,12 @@ function handleCustomColorChange(e: Event) {
         <div class="flex flex-wrap gap-4">
             {#each themes as theme}
                 <button
-                    class="w-11 h-11 rounded-full border-4 transition-all hover:scale-105 active:scale-95 shadow-(--shadow-ambient) {preferences.theme ===
+                    class="w-11 h-11 rounded-full border-4 transition-all hover:scale-105 active:scale-95 shadow-(--shadow-ambient) cursor-pointer {preferences.theme ===
                     theme.id
                         ? 'border-text-primary'
                         : 'border-transparent'}"
                     style="background-color: {theme.var}"
-                    on:click={() => updatePrefs({ theme: theme.id })}
+                    onclick={() => updatePrefs({ theme: theme.id })}
                     title={theme.label}
                     aria-label={theme.label}
                 ></button>
@@ -113,32 +117,14 @@ function handleCustomColorChange(e: Event) {
                     <div
                         class="absolute inset-0 bg-surface/40 backdrop-blur-[0.5px] rounded-full z-10 flex items-center justify-center cursor-not-allowed border-2 border-dashed border-border/50"
                     >
-                        <svg
-                            class="w-3.5 h-3.5 text-text-tertiary"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="3"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <rect
-                                x="3"
-                                y="11"
-                                width="18"
-                                height="11"
-                                rx="2"
-                                ry="2"
-                            />
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                        </svg>
+                        <Icon name="lock" class="w-3.5 h-3.5 text-text-tertiary" />
                     </div>
                 {/if}
                 <input
                     id="custom-color-pro"
                     type="color"
                     value={preferences.customAccentColor || '#000000'}
-                    on:input={handleCustomColorChange}
+                    oninput={handleCustomColorChange}
                     disabled={!isPro}
                     class="absolute inset-0 w-full h-full opacity-0 z-20 {isPro ? 'cursor-pointer' : 'cursor-not-allowed'}"
                 />
@@ -149,29 +135,9 @@ function handleCustomColorChange(e: Event) {
                     style="background-color: {preferences.customAccentColor || 'var(--bg-primary)'}"
                 >
                     {#if preferences.theme === 'custom'}
-                        <svg
-                            class="w-5 h-5 text-text-primary"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="3"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <polyline points="20 6 9 17 4 12" />
-                        </svg>
+                        <Icon name="check" class="w-5 h-5 text-text-primary" />
                     {:else}
-                        <svg
-                            class="w-5 h-5 text-text-tertiary/30"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="3"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path d="M12 5v14M5 12h14" />
-                        </svg>
+                        <Icon name="plus" class="w-5 h-5 text-text-tertiary/30" />
                     {/if}
                 </label>
             </div>
@@ -189,14 +155,14 @@ function handleCustomColorChange(e: Event) {
             {#each fonts as font}
                 <button
                     disabled={font.isPro && !isPro}
-                    class="flex-1 py-2.5 flex flex-col items-center justify-center rounded-xl text-xs font-semibold transition-all {font.class}
+                    class="flex-1 py-2.5 flex flex-col items-center justify-center rounded-xl text-xs font-semibold transition-all {font.class} cursor-pointer
                  {preferences.fontFamily === font.id
                         ? 'bg-surface text-text-primary shadow-(--shadow-ambient)'
                         : 'text-text-tertiary'}
                  {font.isPro && !isPro
                         ? 'opacity-40 cursor-not-allowed'
                         : 'hover:text-text-secondary'}"
-                    on:click={() => updatePrefs({ fontFamily: font.id })}
+                    onclick={() => updatePrefs({ fontFamily: font.id })}
                 >
                     <span>{font.label}</span>
                     {#if font.isPro && !isPro}
@@ -222,22 +188,11 @@ function handleCustomColorChange(e: Event) {
                 <span class="text-xs font-semibold text-text-primary">Move High Priority to Top</span>
                 <span class="text-[10px] text-text-tertiary">Automatically group urgent tasks at the top</span>
             </div>
-            <button
-                type="button"
-                class="w-12 h-6 rounded-full p-1 transition-all duration-300 relative flex items-center focus:outline-none
-                       {preferences.moveHighPriorityToTop
-                         ? 'bg-accent/20 border border-accent/20'
-                         : 'bg-bg-secondary border border-border'}"
-                on:click={() => updatePrefs({ moveHighPriorityToTop: !preferences.moveHighPriorityToTop })}
+            <ToggleSwitch
+                checked={preferences.moveHighPriorityToTop ?? true}
+                onchange={(checked) => updatePrefs({ moveHighPriorityToTop: checked })}
                 aria-label="Toggle Move High Priority to Top"
-            >
-                <div
-                    class="w-4 h-4 rounded-full transition-all duration-300 shadow-(--shadow-ambient)
-                           {preferences.moveHighPriorityToTop
-                             ? 'bg-accent translate-x-5.5'
-                             : 'bg-text-tertiary translate-x-0'}"
-                ></div>
-            </button>
+            />
         </div>
     </div>
 </div>

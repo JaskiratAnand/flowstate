@@ -6,6 +6,7 @@ export interface TimerState {
   remainingSeconds: number;
   sessionType: SessionType;
   completedSessions: number;
+  expectedEndTime?: number;
 }
 
 export interface TimerConfig {

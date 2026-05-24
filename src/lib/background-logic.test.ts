@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   handleMessage,
   handleAlarm,
   handleInstalled,
   handleStorageChange,
   handleStartup,
+  handleMidnightArchive,
 } from './background-logic';
 
 import { browser } from 'wxt/browser';
@@ -104,12 +105,13 @@ describe('Background Logic', () => {
     );
   });
 
-  it('handles pomodoro-tick alarm by decrementing time', async () => {
+  it('handles pomodoro-tick alarm by completing session', async () => {
     const mockState = {
       status: 'running',
       remainingSeconds: 1500,
       sessionType: 'work',
       completedSessions: 0,
+      expectedEndTime: Date.now(),
     };
     const mockConfig = {
       workDuration: 25,
@@ -130,7 +132,10 @@ describe('Background Logic', () => {
     expect(browser.storage.local.set).toHaveBeenCalledWith(
       expect.objectContaining({
         [STORAGE_KEYS.TIMER_STATE]: expect.objectContaining({
-          remainingSeconds: 1499,
+          status: 'idle',
+          remainingSeconds: 300,
+          sessionType: 'short-break',
+          completedSessions: 1,
         }),
       }),
     );
@@ -520,6 +525,85 @@ describe('Background Logic', () => {
       expect(
         browser.declarativeNetRequest.updateDynamicRules,
       ).toHaveBeenCalled();
+    });
+  });
+
+  describe('handleMidnightArchive', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-05-24T00:00:00Z'));
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('does nothing if tasks is empty or undefined', async () => {
+      vi.mocked(browser.storage.local.get).mockImplementation(async (key) => {
+        if (key === STORAGE_KEYS.TASKS)
+          return { [STORAGE_KEYS.TASKS]: undefined };
+        return {};
+      });
+
+      await handleMidnightArchive();
+
+      expect(browser.storage.local.set).not.toHaveBeenCalled();
+    });
+
+    it('archives completed tasks and carries over incomplete tasks', async () => {
+      const mockTasks = [
+        {
+          id: '1',
+          text: 'Task 1',
+          completed: true,
+          category: 'Work',
+          order: 0,
+          createdAt: 123,
+        },
+        {
+          id: '2',
+          text: 'Task 2',
+          completed: false,
+          category: 'Personal',
+          order: 1,
+          createdAt: 124,
+        },
+        {
+          id: '3',
+          text: 'Task 3',
+          completed: true,
+          category: 'Study',
+          order: 2,
+          createdAt: 125,
+        },
+      ];
+
+      vi.mocked(browser.storage.local.get).mockImplementation(async (key) => {
+        if (key === STORAGE_KEYS.TASKS)
+          return { [STORAGE_KEYS.TASKS]: mockTasks };
+        if (key === STORAGE_KEYS.DAILY_ARCHIVE)
+          return { [STORAGE_KEYS.DAILY_ARCHIVE]: {} };
+        return {};
+      });
+
+      await handleMidnightArchive();
+
+      // Incomplete tasks should carry over (only Task 2)
+      expect(browser.storage.local.set).toHaveBeenCalledWith({
+        [STORAGE_KEYS.TASKS]: [
+          expect.objectContaining({ id: '2', completed: false }),
+        ],
+      });
+
+      // Completed tasks (Task 1 and Task 3) should be archived under '2026-05-24'
+      expect(browser.storage.local.set).toHaveBeenCalledWith({
+        [STORAGE_KEYS.DAILY_ARCHIVE]: {
+          '2026-05-24': [
+            expect.objectContaining({ id: '1', completed: true }),
+            expect.objectContaining({ id: '3', completed: true }),
+          ],
+        },
+      });
     });
   });
 });

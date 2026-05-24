@@ -2,10 +2,12 @@
 import { setStorageItem } from '../lib/storage';
 import type { TimerConfig } from '../lib/types';
 
-export let config: TimerConfig;
+let { config = $bindable() } = $props<{
+  config: TimerConfig;
+}>();
 
 async function updateConfig() {
-  await setStorageItem('TIMER_CONFIG', config);
+  await setStorageItem('TIMER_CONFIG', $state.snapshot(config));
 }
 </script>
 
@@ -22,7 +24,7 @@ async function updateConfig() {
                 id="work"
                 type="number"
                 bind:value={config.workDuration}
-                on:change={updateConfig}
+                onchange={updateConfig}
                 class="w-full bg-bg-primary shadow-(--shadow-pressed) rounded-xl px-4 py-3 text-sm font-semibold text-text-primary outline-none transition-all focus:shadow-(--shadow-pressed)"
             />
             <span
@@ -42,7 +44,7 @@ async function updateConfig() {
                 id="short"
                 type="number"
                 bind:value={config.shortBreakDuration}
-                on:change={updateConfig}
+                onchange={updateConfig}
                 class="w-full bg-bg-primary shadow-(--shadow-pressed) rounded-xl px-4 py-3 text-sm font-semibold text-text-primary outline-none transition-all focus:shadow-(--shadow-pressed)"
             />
             <span
@@ -62,7 +64,7 @@ async function updateConfig() {
                 id="long"
                 type="number"
                 bind:value={config.longBreakDuration}
-                on:change={updateConfig}
+                onchange={updateConfig}
                 class="w-full bg-bg-primary shadow-(--shadow-pressed) rounded-xl px-4 py-3 text-sm font-semibold text-text-primary outline-none transition-all focus:shadow-(--shadow-pressed)"
             />
             <span

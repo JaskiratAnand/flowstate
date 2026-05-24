@@ -10,7 +10,13 @@
     "chrome": "readonly",
     "defineBackground": "readonly",
     "defineContentScript": "readonly",
-    "defineUnlistedScript": "readonly"
+    "defineUnlistedScript": "readonly",
+    "$state": "readonly",
+    "$derived": "readonly",
+    "$props": "readonly",
+    "$effect": "readonly",
+    "$inspect": "readonly",
+    "$host": "readonly"
   },
   "rules": {
     "no-debugger": "error",

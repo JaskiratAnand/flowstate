@@ -58,7 +58,6 @@ export async function handleAlarm(alarm: { name: string }) {
     // Handle stats on work session completion
     if (
       stateBefore?.status === 'running' &&
-      stateBefore.remainingSeconds === 0 &&
       stateBefore.sessionType === 'work'
     ) {
       const stats = await getStorageItem('STATS');

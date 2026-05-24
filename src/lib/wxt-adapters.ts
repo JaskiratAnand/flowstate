@@ -16,8 +16,8 @@ export class WxtStorageAdapter implements StoragePort {
 }
 
 export class WxtAlarmAdapter implements AlarmPort {
-  async scheduleTick(): Promise<void> {
-    await browser.alarms.create('pomodoro-tick', { periodInMinutes: 1 / 60 });
+  async scheduleTick(expectedEndTime: number): Promise<void> {
+    await browser.alarms.create('pomodoro-tick', { when: expectedEndTime });
   }
 
   async clearTick(): Promise<void> {
