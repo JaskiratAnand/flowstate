@@ -4,13 +4,21 @@ import type { TimerState, TimerConfig } from './types';
 export function startTimer(state: TimerState, config: TimerConfig): TimerState {
   if (state.status !== 'idle' && state.status !== 'paused') return state;
 
+  let remaining = state.remainingSeconds;
+  if (state.status === 'idle' && remaining <= 0) {
+    if (state.sessionType === 'short-break') {
+      remaining = config.shortBreakDuration * 60;
+    } else if (state.sessionType === 'long-break') {
+      remaining = config.longBreakDuration * 60;
+    } else {
+      remaining = config.workDuration * 60;
+    }
+  }
+
   return {
     ...state,
     status: 'running',
-    remainingSeconds:
-      state.status === 'idle'
-        ? config.workDuration * 60
-        : state.remainingSeconds,
+    remainingSeconds: remaining,
   };
 }
 

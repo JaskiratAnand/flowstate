@@ -9,7 +9,7 @@ describe('Timer Logic', () => {
     longBreakDuration: 15,
   };
 
-  it('transitions from idle to running and sets remaining seconds based on config', () => {
+  it('starts a work session from idle with remainingSeconds = 0 using config', () => {
     const initialState: TimerState = {
       status: 'idle',
       remainingSeconds: 0,
@@ -20,7 +20,49 @@ describe('Timer Logic', () => {
     const nextState = startTimer(initialState, config);
 
     expect(nextState.status).toBe('running');
-    expect(nextState.remainingSeconds).toBe(25 * 60);
+    expect(nextState.remainingSeconds).toBe(config.workDuration * 60);
+  });
+
+  it('starts a short-break session from idle with remainingSeconds = 0 using config', () => {
+    const initialState: TimerState = {
+      status: 'idle',
+      remainingSeconds: 0,
+      sessionType: 'short-break',
+      completedSessions: 0,
+    };
+
+    const nextState = startTimer(initialState, config);
+
+    expect(nextState.status).toBe('running');
+    expect(nextState.remainingSeconds).toBe(config.shortBreakDuration * 60);
+  });
+
+  it('starts a long-break session from idle with remainingSeconds = 0 using config', () => {
+    const initialState: TimerState = {
+      status: 'idle',
+      remainingSeconds: 0,
+      sessionType: 'long-break',
+      completedSessions: 0,
+    };
+
+    const nextState = startTimer(initialState, config);
+
+    expect(nextState.status).toBe('running');
+    expect(nextState.remainingSeconds).toBe(config.longBreakDuration * 60);
+  });
+
+  it('preserves preloaded remaining duration when starting from idle state if remainingSeconds > 0', () => {
+    const initialState: TimerState = {
+      status: 'idle',
+      remainingSeconds: 120, // preloaded (e.g. 2 minutes)
+      sessionType: 'short-break',
+      completedSessions: 0,
+    };
+
+    const nextState = startTimer(initialState, config);
+
+    expect(nextState.status).toBe('running');
+    expect(nextState.remainingSeconds).toBe(120);
   });
 
   it('transitions from running to paused without changing remaining seconds', () => {

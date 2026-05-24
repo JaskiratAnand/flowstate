@@ -74,6 +74,7 @@ export class TimerEngineImpl implements TimerEngine {
         // Force end current session
         const endState = {
           ...state,
+          status: 'running' as const,
           remainingSeconds: 0,
           expectedEndTime: undefined,
         };

@@ -63,6 +63,50 @@ describe('TimerEngine', () => {
     expect(alarms.scheduleTick).toHaveBeenCalledWith(expectedEndTime);
   });
 
+  it('START (from idle, short-break, remainingSeconds = 0): should set remainingSeconds to short break duration, set status to running, and schedule alarm', async () => {
+    storage.getState = vi.fn().mockResolvedValue({
+      ...initialState,
+      status: 'idle',
+      sessionType: 'short-break',
+      remainingSeconds: 0,
+    });
+
+    await engine.execute('START');
+
+    const expectedEndTime = Date.now() + 5 * 60 * 1000;
+    expect(storage.setState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: 'running',
+        sessionType: 'short-break',
+        remainingSeconds: 5 * 60,
+        expectedEndTime,
+      }),
+    );
+    expect(alarms.scheduleTick).toHaveBeenCalledWith(expectedEndTime);
+  });
+
+  it('START (from idle, short-break, remainingSeconds > 0): should preserve remainingSeconds, set status to running, and schedule alarm', async () => {
+    storage.getState = vi.fn().mockResolvedValue({
+      ...initialState,
+      status: 'idle',
+      sessionType: 'short-break',
+      remainingSeconds: 300,
+    });
+
+    await engine.execute('START');
+
+    const expectedEndTime = Date.now() + 300 * 1000;
+    expect(storage.setState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: 'running',
+        sessionType: 'short-break',
+        remainingSeconds: 300,
+        expectedEndTime,
+      }),
+    );
+    expect(alarms.scheduleTick).toHaveBeenCalledWith(expectedEndTime);
+  });
+
   it('START (from paused): should start with remaining seconds and set correct expectedEndTime', async () => {
     storage.getState = vi.fn().mockResolvedValue({
       ...initialState,
@@ -159,6 +203,48 @@ describe('TimerEngine', () => {
       status: 'running',
       expectedEndTime: Date.now() + 1500 * 1000,
       remainingSeconds: 1500,
+      sessionType: 'work',
+    });
+
+    await engine.execute('SKIP');
+
+    expect(storage.setState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sessionType: 'short-break',
+        status: 'idle',
+        remainingSeconds: 5 * 60,
+        expectedEndTime: undefined,
+      }),
+    );
+    expect(alarms.clearTick).toHaveBeenCalled();
+  });
+
+  it('SKIP (from paused): should transition session and clear alarm', async () => {
+    storage.getState = vi.fn().mockResolvedValue({
+      ...initialState,
+      status: 'paused',
+      remainingSeconds: 1500,
+      sessionType: 'work',
+    });
+
+    await engine.execute('SKIP');
+
+    expect(storage.setState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sessionType: 'short-break',
+        status: 'idle',
+        remainingSeconds: 5 * 60,
+        expectedEndTime: undefined,
+      }),
+    );
+    expect(alarms.clearTick).toHaveBeenCalled();
+  });
+
+  it('SKIP (from idle): should transition session and clear alarm', async () => {
+    storage.getState = vi.fn().mockResolvedValue({
+      ...initialState,
+      status: 'idle',
+      remainingSeconds: 25 * 60,
       sessionType: 'work',
     });
 
