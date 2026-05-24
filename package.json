@@ -12,11 +12,12 @@
     "build": "wxt build",
     "build:firefox": "wxt build -b firefox",
     "build:pro": "WXT_PRO_VERSION=true wxt build",
-    "build:all": "pnpm run build && pnpm run build:firefox",
+    "prebuild:all": "pnpm run prebuild",
+    "build:all": "wxt build && wxt build -b firefox",
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "zip:pro": "WXT_PRO_VERSION=true wxt zip",
-    "zip:all": "pnpm run zip && pnpm run zip:firefox",
+    "zip:all": "wxt zip && wxt zip -b firefox",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -24,7 +25,8 @@
     "fmt": "biome format --write .",
     "postinstall": "wxt prepare",
     "preversion": "pnpm run prebuild && pnpm test",
-    "postversion": "echo \"Version bumped. Update CHANGELOG.md, then run: git push && git push --tags\""
+    "postversion": "echo \"Version bumped. Update CHANGELOG.md, then run: git push && git push --tags\"",
+    "clean": "rm -r .output"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.15",
