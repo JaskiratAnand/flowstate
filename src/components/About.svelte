@@ -438,11 +438,21 @@ onDestroy(() => {
                             </p>
                             <p>
                                 <span class="text-text-primary font-semibold"
-                                    >Blocked Domains</span
-                                > — Add websites you want to restrict during work
+                                    >Blocklist</span
+                                > — Add specific websites you want to restrict during work
                                 (e.g. social media, news). When you try to visit them,
                                 they will be replaced with a breathing exercise to
                                 ground you.
+                            </p>
+                            <p>
+                                <span class="text-text-primary font-semibold"
+                                    >Allowlist (Pro)</span
+                                > — Block the entire internet except for a few specific websites you explicitly allow. Perfect for deep, uncompromised focus.
+                            </p>
+                            <p>
+                                <span class="text-text-primary font-semibold"
+                                    >Which to use?</span
+                                > — Use Blocklist for daily maintenance and preventing habitual distractions. Use Allowlist for intense, deep work sessions where you only need a handful of tools.
                             </p>
                             <p>
                                 <span class="text-text-primary font-semibold"
