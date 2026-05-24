@@ -361,6 +361,11 @@ onDestroy(() => {
                             </p>
                             <p>
                                 <span class="text-text-primary font-semibold"
+                                    >Task Priorities</span
+                                > — Organize your tasks using a traffic light system. Tap the status indicator circle next to any task to cycle through priorities: Red (High), Yellow (Medium), Green (Low), and None. By default, High Priority tasks automatically float to the top of your list to keep you focused on what matters most (this behavior can be toggled in Settings).
+                            </p>
+                            <p>
+                                <span class="text-text-primary font-semibold"
                                     >Delete a task</span
                                 > — Swipe or tap the remove button to discard a task
                                 you no longer need.
