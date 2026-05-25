@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, fireEvent } from '@testing-library/svelte';
-import TimerConfigComp from './TimerConfig.svelte';
+import TimerConfigCompWrapper from './TimerConfigTestWrapper.svelte';
 import type { TimerConfig } from '../lib/types';
 
 const mockStorage: Record<string, any> = {};
@@ -24,8 +24,8 @@ describe('TimerConfig Component', () => {
   });
 
   it('renders input elements with correct values', () => {
-    const { getByLabelText } = render(TimerConfigComp, {
-      config: initialConfig,
+    const { getByLabelText } = render(TimerConfigCompWrapper, {
+      initialConfig,
     });
 
     const workInput = getByLabelText('Focus') as HTMLInputElement;
@@ -38,8 +38,8 @@ describe('TimerConfig Component', () => {
   });
 
   it('calls setStorageItem and updates bound value on change', async () => {
-    const { getByLabelText } = render(TimerConfigComp, {
-      config: initialConfig,
+    const { getByLabelText } = render(TimerConfigCompWrapper, {
+      initialConfig,
     });
     const workInput = getByLabelText('Focus') as HTMLInputElement;
 
