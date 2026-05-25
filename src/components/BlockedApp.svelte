@@ -139,46 +139,86 @@ function handleKeyPress(e: KeyboardEvent) {
 }
 </script>
 
-<main class="flex-1 flex flex-col items-center justify-center p-8 bg-bg-primary text-text-primary transition-colors duration-500 font-body relative h-full">
+<main
+    class="flex-1 flex flex-col items-center justify-center p-8 bg-bg-primary text-text-primary transition-colors duration-500 font-body relative h-full"
+>
     <!-- Calm Background Elements -->
-    <div class="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(ellipse_at_center,var(--accent)_0%,transparent_70%)]"></div>
+    <div
+        class="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(ellipse_at_center,var(--accent)_0%,transparent_70%)]"
+    ></div>
 
     <div class="w-full max-w-md flex flex-col items-center text-center z-10">
         <!-- Category Nudge -->
-        <span class="text-[10px] font-bold uppercase tracking-[0.25em] text-text-tertiary mb-8">
+        <span
+            class="text-[10px] font-bold uppercase tracking-[0.25em] text-text-tertiary mb-8"
+        >
             Focus Session in Progress
         </span>
 
         {#if countdown > 0}
             <!-- Breathing Guide View -->
-            <div class="flex flex-col items-center justify-center h-80 w-full animate-in fade-in duration-500">
+            <div
+                class="flex flex-col items-center justify-center h-80 w-full animate-in fade-in duration-500"
+            >
                 <!-- Circular Breathing Ring -->
-                <div 
+                <div
                     class="w-44 h-44 rounded-full flex flex-col items-center justify-center bg-accent-soft border-2 border-accent/25 shadow-(--shadow-ambient) transition-transform duration-1000 ease-in-out"
                     style="transform: scale({phase.scale});"
                 >
-                    <span class="text-4xl font-bold font-body text-text-primary tracking-tighter">{countdown}</span>
+                    <span
+                        class="text-4xl font-bold font-body text-text-primary tracking-tighter"
+                        >{countdown}</span
+                    >
                 </div>
-                
+
                 <!-- Instruction text -->
-                <p class="mt-12 text-base font-semibold tracking-wide text-text-secondary h-8 flex items-center justify-center transition-all duration-300">
+                <p
+                    class="mt-12 text-base font-semibold tracking-wide text-text-secondary h-8 flex items-center justify-center transition-all duration-300"
+                >
                     {phase.text}
                 </p>
-                <span class="text-[10px] text-text-tertiary mt-2">Let the circle guide your breath</span>
+                <span class="text-[10px] text-text-tertiary mt-2"
+                    >Let the circle guide your breath</span
+                >
             </div>
         {:else}
             <!-- Mindful Challenge View -->
-            <div class="flex flex-col items-center w-full animate-in fade-in duration-700">
-                <h2 class="text-2xl font-heading text-text-primary mb-3">Pause & Reflect</h2>
-                <p class="text-xs text-text-secondary mb-6 leading-relaxed max-w-xs">
-                    You're attempting to visit <span class="font-semibold text-text-primary font-mono bg-bg-secondary px-1.5 py-0.5 rounded border border-border">{cleanDomain || 'a blocked site'}</span>.
-                    To confirm this decision, type the mindful phrase below:
+            <div
+                class="flex flex-col items-center w-full animate-in fade-in duration-700"
+            >
+                <h2 class="text-2xl font-heading text-text-primary mb-3">
+                    Pause & Reflect
+                </h2>
+
+                {#if !cleanDomain}
+                    <div
+                        class="w-full p-4 mb-6 bg-[rgba(239,68,68,0.1)] border border-[rgba(239,68,68,0.2)] text-(--color-red) text-xs font-semibold rounded-2xl text-center"
+                    >
+                        ⚠️ This challenge cannot be bypassed because the
+                        destination website is unknown.
+                    </div>
+                {/if}
+
+                <p
+                    class="text-xs text-text-secondary mb-6 leading-relaxed max-w-xs"
+                >
+                    You're attempting to visit <span
+                        class="font-semibold text-text-primary font-mono bg-bg-secondary px-1.5 py-0.5 rounded border border-border"
+                        >{cleanDomain || "a blocked site"}</span
+                    >. To confirm this decision, type the mindful phrase below:
                 </p>
 
                 <!-- Mindful Phrase Box -->
-                <div class="w-full p-4 mb-6 bg-bg-secondary rounded-2xl border border-border shadow-(--shadow-pressed) flex flex-col items-center justify-center">
-                    <span class="text-[8px] font-bold uppercase tracking-widest text-text-tertiary mb-2">Intentional Phrase</span>
-                    <span class="text-sm font-semibold italic text-text-secondary select-none font-heading text-center">
+                <div
+                    class="w-full p-4 mb-6 bg-bg-secondary rounded-2xl border border-border shadow-(--shadow-pressed) flex flex-col items-center justify-center"
+                >
+                    <span
+                        class="text-[8px] font-bold uppercase tracking-widest text-text-tertiary mb-2"
+                        >Intentional Phrase</span
+                    >
+                    <span
+                        class="text-sm font-semibold italic text-text-secondary select-none font-heading text-center"
+                    >
                         "{targetPhrase}"
                     </span>
                 </div>
@@ -196,7 +236,7 @@ function handleKeyPress(e: KeyboardEvent) {
 
                 <!-- Buttons -->
                 <div class="w-full space-y-3 flex flex-col items-center">
-                    {#if phraseMatches}
+                    {#if phraseMatches && cleanDomain}
                         <button
                             type="button"
                             onclick={handleBypass}
@@ -212,7 +252,9 @@ function handleKeyPress(e: KeyboardEvent) {
                                 stroke-linejoin="round"
                                 aria-hidden="true"
                             >
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                <path
+                                    d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                                />
                             </svg>
                             Bypass for {bypassDuration} Mins
                         </button>

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { generateDynamicRules, getCleanDomain } from './blocking';
 import type { BlockingConfig, TimerState, BypassItem } from './types';
+import { browser } from 'wxt/browser';
 
 describe('Blocking Engine - Domain Cleaning', () => {
   it('cleans domains correctly', () => {
@@ -283,6 +284,32 @@ describe('Blocking Engine - Dynamic Rules Generator', () => {
       expect(rules[0].condition.excludedInitiatorDomains).toEqual([
         'mock-extension-id',
       ]);
+    });
+  });
+
+  describe('Firefox Environment Redirection', () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    it('uses browser.runtime.getURL when in Firefox build environment', () => {
+      vi.stubEnv('FIREFOX', 'true');
+      const getURLSpy = vi
+        .spyOn(browser.runtime, 'getURL')
+        .mockReturnValue('moz-extension://mock-firefox-uuid/blocked.html');
+
+      const rules = generateDynamicRules(
+        defaultBlockingConfig,
+        defaultTimerState,
+        emptyBypasses,
+      );
+
+      expect(getURLSpy).toHaveBeenCalledWith('/blocked.html');
+      expect(rules[0].action.redirect.regexSubstitution).toBe(
+        'moz-extension://mock-firefox-uuid/blocked.html?url=\\0',
+      );
+
+      getURLSpy.mockRestore();
     });
   });
 });

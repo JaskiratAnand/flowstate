@@ -70,6 +70,10 @@ export function generateDynamicRules(
   const effectiveMode = isPro ? config.mode : 'blocklist';
 
   // 3. Generate rules based on effective mode
+  const redirectUrl = import.meta.env.FIREFOX
+    ? `${browser.runtime.getURL('/blocked.html')}?url=\\0`
+    : `chrome-extension://${browser.runtime.id}/blocked.html?url=\\0`;
+
   if (effectiveMode === 'blocklist') {
     const rules: any[] = [];
     const nonBypassedSites = config.blockedSites.filter(
@@ -87,7 +91,7 @@ export function generateDynamicRules(
         action: {
           type: 'redirect',
           redirect: {
-            regexSubstitution: `chrome-extension://${browser.runtime.id}/blocked.html?url=\\0`,
+            regexSubstitution: redirectUrl,
           },
         },
         condition: {
@@ -116,7 +120,7 @@ export function generateDynamicRules(
         action: {
           type: 'redirect',
           redirect: {
-            regexSubstitution: `chrome-extension://${browser.runtime.id}/blocked.html?url=\\0`,
+            regexSubstitution: redirectUrl,
           },
         },
         condition: {

@@ -263,4 +263,37 @@ describe('BlockedApp Component', () => {
     expect(closeMock).toHaveBeenCalled();
     expect(replaceMock).toHaveBeenCalledWith('https://google.com');
   });
+
+  it('hides bypass option and shows warning if target domain is missing', async () => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        href: 'http://localhost/blocked.html',
+        search: '',
+        replace: replaceMock,
+      },
+      configurable: true,
+      writable: true,
+    });
+
+    const { getByPlaceholderText, getByText, queryByText } =
+      await mountAndSetup();
+
+    // Let 15 seconds pass
+    await vi.advanceTimersByTimeAsync(15000);
+
+    // Verify warning is displayed
+    expect(getByText(/This challenge cannot be bypassed/i)).toBeInTheDocument();
+
+    const input = getByPlaceholderText(
+      'Type the phrase to proceed...',
+    ) as HTMLInputElement;
+
+    // Type correct phrase
+    await fireEvent.input(input, {
+      target: { value: 'I choose to bypass my focus right now.' },
+    });
+
+    // Verify that bypass button is NOT shown
+    expect(queryByText(/Bypass for 10 Mins/i)).not.toBeInTheDocument();
+  });
 });
