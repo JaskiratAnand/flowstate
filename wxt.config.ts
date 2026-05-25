@@ -24,6 +24,19 @@ export default defineConfig({
         matches: ['<all_urls>'],
       },
     ],
+    ...(browser === 'firefox'
+      ? {
+          browser_specific_settings: {
+            gecko: {
+              id: 'flowstate@jaskiratanand.com',
+              strict_min_version: '140.0',
+              data_collection_permissions: {
+                required: ['none'],
+              },
+            },
+          },
+        }
+      : {}),
     action: {
       default_icon: 'icon/48.png',
     },
