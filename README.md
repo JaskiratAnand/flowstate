@@ -1,6 +1,6 @@
 # FlowState
 
-<p install="center">
+<p align="center">
   <img src="public/icon/128.png" alt="FlowState Logo" width="96" height="96" />
 </p>
 
@@ -12,6 +12,20 @@ FlowState is a tactile, sensory-focused Pomodoro and Todo browser extension that
 [![Framework](https://img.shields.io/badge/Framework-WXT_MV3-emerald)](https://wxt.dev/)
 [![UI Library](https://img.shields.io/badge/UI-Svelte_5-orange)](https://svelte.dev/)
 [![TypeScript](https://img.shields.io/badge/Language-TypeScript-blue)](https://www.typescriptlang.org/)
+
+---
+
+### Install Extension
+
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/flowstate-pomodoro-timer/doikpbcgobfmbefibjjheipkgmgkgifk">
+    <img src="https://img.shields.io/badge/Chrome_Web_Store-Get_FlowState-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Get FlowState on Chrome Web Store" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://addons.mozilla.org/en-GB/firefox/addon/flowstate/">
+    <img src="https://img.shields.io/badge/Firefox_Add--ons-Get_FlowState-FF7139?style=for-the-badge&logo=firefoxbrowser&logoColor=white" alt="Get FlowState on Firefox Add-ons" />
+  </a>
+</p>
 
 ---
 
