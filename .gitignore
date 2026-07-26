@@ -7,8 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-.serena
 .DS_Store
+.antigravitycli
+.agents
+skills-lock.json
 
 node_modules
 .output
@@ -27,5 +29,3 @@ web-ext.config.ts
 *.njsproj
 *.sln
 *.sw?
-
-.antigravitycli

@@ -1,6 +1,5 @@
 <script lang="ts">
 import { onMount, onDestroy } from 'svelte';
-const isPro = import.meta.env.WXT_PRO_VERSION === 'true';
 import type { TabType, UserPreferences } from '../../lib/types';
 import { getStorageItem, setStorageItem } from '../../lib/storage';
 import TabBar from '../../components/TabBar.svelte';
@@ -75,18 +74,6 @@ onMount(async () => {
   if (prefs.showSkipButton === undefined) {
     prefs.showSkipButton = true;
     updated = true;
-  }
-
-  // Lock pro features if active
-  if (!isPro) {
-    if (prefs.theme === 'custom') {
-      prefs.theme = 'forest';
-      updated = true;
-    }
-    if (prefs.fontFamily !== 'karla') {
-      prefs.fontFamily = 'karla';
-      updated = true;
-    }
   }
 
   if (updated) {
@@ -193,12 +180,6 @@ function handlePrefsUpdate(newPrefs: UserPreferences) {
                             : activeTab.charAt(0).toUpperCase() +
                               activeTab.slice(1)}
                     </h1>
-                    {#if isPro}
-                        <span
-                            class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-accent/15 text-accent select-none"
-                            >PRO</span
-                        >
-                    {/if}
                 </div>
             </button>
 

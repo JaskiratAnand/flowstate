@@ -118,8 +118,7 @@ describe('BlockingModal Component', () => {
     );
   });
 
-  it('switches tabs between Blocklist and Allowlist when PRO', async () => {
-    vi.stubEnv('WXT_PRO_VERSION', 'true');
+  it('switches tabs between Blocklist and Allowlist', async () => {
     const onClose = vi.fn();
     const { getByText, queryByText } = render(BlockingModal, { onClose });
 
@@ -144,42 +143,6 @@ describe('BlockingModal Component', () => {
     );
     expect(getByText('wikipedia.org')).toBeInTheDocument();
     expect(queryByText('youtube.com')).not.toBeInTheDocument();
-  });
-
-  describe('Non-Pro Restrictions', () => {
-    it('gracefully degrades to blocklist if allowlist was configured', async () => {
-      vi.stubEnv('WXT_PRO_VERSION', 'false');
-      mockStorage['blocking_config'] = { ...defaultConfig, mode: 'allowlist' };
-      const onClose = vi.fn();
-      render(BlockingModal, { onClose });
-
-      await waitFor(() => {
-        expect(browser.storage.local.get).toHaveBeenCalled();
-        expect(browser.storage.local.set).toHaveBeenCalledWith(
-          expect.objectContaining({
-            blocking_config: expect.objectContaining({
-              mode: 'blocklist',
-            }),
-          }),
-        );
-      });
-    });
-
-    it('disables Allowlist tab and shows Unlock Pro tooltip', async () => {
-      vi.stubEnv('WXT_PRO_VERSION', 'false');
-      const onClose = vi.fn();
-      const { getByText, getByRole } = render(BlockingModal, { onClose });
-
-      await waitFor(() => {
-        expect(browser.storage.local.get).toHaveBeenCalled();
-      });
-
-      const allowlistTab = getByRole('button', { name: 'Allowlist' });
-      expect(allowlistTab).toBeDisabled();
-
-      // Tooltip
-      expect(getByText('Unlock Pro')).toBeInTheDocument();
-    });
   });
 
   it('shows error validation for invalid domain input', async () => {

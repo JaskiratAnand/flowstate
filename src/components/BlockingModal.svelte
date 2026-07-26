@@ -8,8 +8,6 @@ import Icon from './Icon.svelte';
 
 let { onClose } = $props<{ onClose: () => void }>();
 
-const isPro = import.meta.env.WXT_PRO_VERSION === 'true';
-
 let enabled = $state(true);
 let strictMode = $state(false);
 let bypassDuration = $state(5);
@@ -46,19 +44,6 @@ onMount(async () => {
       'facebook.com',
     ];
     allowedSites = [];
-  }
-
-  // Graceful degradation for non-Pro users
-  if (!isPro && mode === 'allowlist') {
-    mode = 'blocklist';
-    await setStorageItem('BLOCKING_CONFIG', {
-      enabled,
-      strictMode,
-      bypassDuration,
-      mode,
-      blockedSites,
-      allowedSites,
-    });
   }
 
   // Wait for the DOM to update and paint the loaded values before enabling transition animations.
@@ -271,24 +256,13 @@ function handleKeyPress(e: KeyboardEvent) {
         >
             Blocklist
         </button>
-        <div class="flex-1 relative group flex">
-            {#if !isPro}
-                <div class="absolute -top-10 left-1/2 -translate-x-1/2 px-2.5 py-1.5 rounded-lg bg-text-primary text-bg-primary text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30 shadow-lg translate-y-1 group-hover:translate-y-0 whitespace-nowrap">
-                    Unlock Pro
-                </div>
-                <div class="absolute inset-0 bg-bg-secondary/40 backdrop-blur-[0.5px] rounded-xl z-10 flex items-center justify-center cursor-not-allowed border-2 border-dashed border-border/50">
-                    <Icon name="lock" class="w-3.5 h-3.5 text-text-tertiary" />
-                </div>
-            {/if}
-            <button
-                type="button"
-                class="flex-1 py-2 flex items-center justify-center rounded-xl text-xs font-semibold {isLoaded ? 'transition-all' : ''} {mode === 'allowlist' ? 'bg-surface text-text-primary shadow-(--shadow-ambient)' : 'text-text-tertiary'} {isPro ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}"
-                onclick={() => isPro && handleTabChange("allowlist")}
-                disabled={!isPro}
-            >
-                Allowlist
-            </button>
-        </div>
+        <button
+            type="button"
+            class="flex-1 py-2 flex items-center justify-center rounded-xl text-xs font-semibold cursor-pointer {isLoaded ? 'transition-all' : ''} {mode === 'allowlist' ? 'bg-surface text-text-primary shadow-(--shadow-ambient)' : 'text-text-tertiary'}"
+            onclick={() => handleTabChange("allowlist")}
+        >
+            Allowlist
+        </button>
     </div>
 
     <!-- Input Section -->

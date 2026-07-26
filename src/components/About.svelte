@@ -451,7 +451,7 @@ onDestroy(() => {
                             </p>
                             <p>
                                 <span class="text-text-primary font-semibold"
-                                    >Allowlist (Pro)</span
+                                    >Allowlist</span
                                 > — Block the entire internet except for a few specific websites you explicitly allow. Perfect for deep, uncompromised focus.
                             </p>
                             <p>

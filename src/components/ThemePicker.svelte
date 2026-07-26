@@ -9,8 +9,6 @@ import { setStorageItem } from '../lib/storage';
 import Icon from './Icon.svelte';
 import ToggleSwitch from './ToggleSwitch.svelte';
 
-const isPro = import.meta.env.WXT_PRO_VERSION === 'true';
-
 let { preferences, onUpdate } = $props<{
   preferences: UserPreferences;
   onUpdate: (prefs: UserPreferences) => void;
@@ -32,22 +30,19 @@ const fonts: {
   id: FontFamily;
   label: string;
   class: string;
-  isPro?: boolean;
 }[] = [
   { id: 'karla', label: 'Sans', class: 'font-[Karla]' },
   {
     id: 'fraunces',
     label: 'Serif',
     class: 'font-[Fraunces]',
-    isPro: true,
   },
   {
     id: 'mono',
     label: 'Mono',
     class: 'font-["JetBrains_Mono"]',
-    isPro: true,
   },
-  { id: 'system', label: 'Sys', class: 'font-sans', isPro: true },
+  { id: 'system', label: 'Sys', class: 'font-sans' },
 ];
 
 async function updatePrefs(patch: Partial<UserPreferences>) {
@@ -108,29 +103,16 @@ function handleCustomColorChange(e: Event) {
             {/each}
 
             <div class="relative w-11 h-11 group">
-                {#if !isPro}
-                    <div
-                        class="absolute -top-9 left-1/2 -translate-x-1/2 px-2.5 py-1.5 rounded-lg bg-text-primary text-bg-primary text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30 shadow-lg translate-y-1 group-hover:translate-y-0 whitespace-nowrap"
-                    >
-                        Unlock Pro
-                    </div>
-                    <div
-                        class="absolute inset-0 bg-surface/40 backdrop-blur-[0.5px] rounded-full z-10 flex items-center justify-center cursor-not-allowed border-2 border-dashed border-border/50"
-                    >
-                        <Icon name="lock" class="w-3.5 h-3.5 text-text-tertiary" />
-                    </div>
-                {/if}
                 <input
-                    id="custom-color-pro"
+                    id="custom-color-picker"
                     type="color"
                     value={preferences.customAccentColor || '#000000'}
                     oninput={handleCustomColorChange}
-                    disabled={!isPro}
-                    class="absolute inset-0 w-full h-full opacity-0 z-20 {isPro ? 'cursor-pointer' : 'cursor-not-allowed'}"
+                    class="absolute inset-0 w-full h-full opacity-0 z-20 cursor-pointer"
                 />
                 <label
-                    for="custom-color-pro"
-                    class="flex items-center justify-center w-11 h-11 rounded-full border-4 shadow-(--shadow-ambient) transition-all
+                    for="custom-color-picker"
+                    class="flex items-center justify-center w-11 h-11 rounded-full border-4 shadow-(--shadow-ambient) transition-all cursor-pointer
                            {preferences.theme === 'custom' ? 'border-text-primary' : 'border-transparent'}"
                     style="background-color: {preferences.customAccentColor || 'var(--bg-primary)'}"
                 >
@@ -154,23 +136,13 @@ function handleCustomColorChange(e: Event) {
         >
             {#each fonts as font}
                 <button
-                    disabled={font.isPro && !isPro}
                     class="flex-1 py-2.5 flex flex-col items-center justify-center rounded-xl text-xs font-semibold transition-all {font.class} cursor-pointer
                  {preferences.fontFamily === font.id
                         ? 'bg-surface text-text-primary shadow-(--shadow-ambient)'
-                        : 'text-text-tertiary'}
-                 {font.isPro && !isPro
-                        ? 'opacity-40 cursor-not-allowed'
-                        : 'hover:text-text-secondary'}"
+                        : 'text-text-tertiary hover:text-text-secondary'}"
                     onclick={() => updatePrefs({ fontFamily: font.id })}
                 >
                     <span>{font.label}</span>
-                    {#if font.isPro && !isPro}
-                        <span
-                            class="text-[7px] font-black uppercase tracking-tighter opacity-60"
-                            >Pro</span
-                        >
-                    {/if}
                 </button>
             {/each}
         </div>

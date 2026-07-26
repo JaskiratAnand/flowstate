@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, fireEvent, waitFor } from '@testing-library/svelte';
 import App from './App.svelte';
 
@@ -95,78 +95,27 @@ describe('App Component Integration', () => {
     });
   });
 
-  describe('PRO version configurations', () => {
-    afterEach(() => {
-      import.meta.env.WXT_PRO_VERSION = undefined;
-    });
+  it('preserves custom theme and font preferences on startup', async () => {
+    mockStorage['user_preferences'] = {
+      theme: 'custom',
+      customAccentColor: '#aabbcc',
+      colorScheme: 'system',
+      fontFamily: 'mono',
+      lastActiveTab: 'timer',
+    };
 
-    it('renders the PRO badge when WXT_PRO_VERSION is enabled', async () => {
-      import.meta.env.WXT_PRO_VERSION = 'true';
-      const { getByText } = render(App);
+    render(App);
 
-      await waitFor(() => {
-        expect(getByText('PRO')).toBeInTheDocument();
-        expect(getByText('PRO')).toHaveClass('bg-accent/15');
-      });
-    });
-
-    it('does not render the PRO badge when WXT_PRO_VERSION is not enabled', async () => {
-      import.meta.env.WXT_PRO_VERSION = 'false';
-      const { queryByText } = render(App);
-
-      await waitFor(() => {
-        expect(queryByText('PRO')).not.toBeInTheDocument();
-      });
-    });
-
-    it('bypasses startup preference sanitization in Pro mode', async () => {
-      import.meta.env.WXT_PRO_VERSION = 'true';
-      mockStorage['user_preferences'] = {
-        theme: 'custom',
-        customAccentColor: '#aabbcc',
-        colorScheme: 'system',
-        fontFamily: 'mono',
-        lastActiveTab: 'timer',
-      };
-
-      render(App);
-
-      await waitFor(() => {
-        expect(document.documentElement.getAttribute('data-theme')).toBe(
-          'custom',
-        );
-        expect(
-          document.documentElement.style.getPropertyValue('--accent'),
-        ).toBe('#aabbcc');
-        expect(
-          document.documentElement.style.getPropertyValue('--font-main'),
-        ).toContain('JetBrains Mono');
-      });
-    });
-
-    it('enforces startup preference sanitization in Free mode', async () => {
-      import.meta.env.WXT_PRO_VERSION = 'false';
-      mockStorage['user_preferences'] = {
-        theme: 'custom',
-        customAccentColor: '#aabbcc',
-        colorScheme: 'system',
-        fontFamily: 'mono',
-        lastActiveTab: 'timer',
-      };
-
-      render(App);
-
-      await waitFor(() => {
-        expect(document.documentElement.getAttribute('data-theme')).toBe(
-          'forest',
-        );
-        expect(
-          document.documentElement.style.getPropertyValue('--font-main'),
-        ).toContain('Karla');
-        expect(
-          document.documentElement.style.getPropertyValue('--accent'),
-        ).toBe('');
-      });
+    await waitFor(() => {
+      expect(document.documentElement.getAttribute('data-theme')).toBe(
+        'custom',
+      );
+      expect(document.documentElement.style.getPropertyValue('--accent')).toBe(
+        '#aabbcc',
+      );
+      expect(
+        document.documentElement.style.getPropertyValue('--font-main'),
+      ).toContain('JetBrains Mono');
     });
   });
 });

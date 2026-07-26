@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { generateDynamicRules, getCleanDomain } from './blocking';
 import type { BlockingConfig, TimerState, BypassItem } from './types';
 import { browser } from 'wxt/browser';
@@ -94,26 +94,7 @@ describe('Blocking Engine - Dynamic Rules Generator', () => {
       vi.unstubAllEnvs();
     });
 
-    it('forces blocklist mode when WXT_PRO_VERSION is not true and mode is allowlist', () => {
-      vi.stubEnv('WXT_PRO_VERSION', 'false');
-      const config: BlockingConfig = {
-        ...defaultBlockingConfig,
-        mode: 'allowlist',
-      };
-      const rules = generateDynamicRules(
-        config,
-        defaultTimerState,
-        emptyBypasses,
-      );
-      // Even though mode is allowlist, it should fallback to blocklist and block the 3 sites in defaultBlockingConfig
-      expect(rules.length).toBe(3);
-      expect(rules[0].condition.regexFilter).toBe(
-        '^https?://(?:[^/]*\\.)?youtube\\.com(?:/.*)?$',
-      );
-    });
-
-    it('allows allowlist mode when WXT_PRO_VERSION is true', () => {
-      vi.stubEnv('WXT_PRO_VERSION', 'true');
+    it('generates allowlist rules when mode is allowlist', () => {
       const config: BlockingConfig = {
         ...defaultBlockingConfig,
         mode: 'allowlist',
@@ -205,14 +186,6 @@ describe('Blocking Engine - Dynamic Rules Generator', () => {
   });
 
   describe('Allowlist Mode', () => {
-    beforeEach(() => {
-      vi.stubEnv('WXT_PRO_VERSION', 'true');
-    });
-
-    afterEach(() => {
-      vi.unstubAllEnvs();
-    });
-
     it('generates a single wildcard redirect rule with allowed sites excluded', () => {
       const config: BlockingConfig = {
         ...defaultBlockingConfig,
