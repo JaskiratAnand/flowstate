@@ -72,24 +72,15 @@ onDestroy(() => {
             bring analog warmth to your digital workflow.
         </p>
 
-        <div class="pt-4">
-            <p
-                class="text-xs text-text-tertiary uppercase tracking-widest mb-1"
-            >
-                Developed by
-            </p>
-            <p class="text-lg font-semibold text-text-primary">
-                Jaskirat Anand
-            </p>
-
+        <div class="flex flex-wrap items-center justify-center gap-2 mt-2">
             <a
-                href="https://github.com/JaskiratAnand"
+                href="https://github.com/JaskiratAnand/flowstate"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-surface shadow-(--shadow-ambient) text-text-secondary hover:text-accent transition-all active:shadow-(--shadow-pressed) active:scale-95"
+                class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface shadow-(--shadow-ambient) text-text-secondary hover:text-accent transition-all active:shadow-(--shadow-pressed) active:scale-95"
             >
                 <svg
-                    class="w-5 h-5"
+                    class="w-4 h-4"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -98,11 +89,49 @@ onDestroy(() => {
                     stroke-linejoin="round"
                 >
                     <path
-                        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                        d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"
                     ></path>
+                    <path d="M9 18c-4.51 2-5-2-7-2"></path>
                 </svg>
-                <span class="text-sm font-medium">@JaskiratAnand</span>
+                <span class="text-xs font-medium">GitHub Repository</span>
             </a>
+        </div>
+
+        <div class="pt-4 flex flex-col items-center gap-3">
+            <div>
+                <p
+                    class="text-xs text-text-tertiary uppercase tracking-widest mb-1"
+                >
+                    Developed by
+                </p>
+                <p class="text-lg font-semibold text-text-primary">
+                    Jaskirat Anand
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-2 mt-2">
+                <a
+                    href="https://github.com/JaskiratAnand"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface shadow-(--shadow-ambient) text-text-secondary hover:text-accent transition-all active:shadow-(--shadow-pressed) active:scale-95"
+                >
+                    <svg
+                        class="w-4 h-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                        ></path>
+                    </svg>
+                    <span class="text-xs font-medium">@JaskiratAnand</span>
+                </a>
+            </div>
         </div>
 
         <!-- Separator Line -->
